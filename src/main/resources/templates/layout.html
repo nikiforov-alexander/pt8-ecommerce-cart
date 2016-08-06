@@ -3,24 +3,31 @@
 	<head th:fragment="head(page_title)" lang="en">
 	    <meta charset="UTF-8" />
 	    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <!--/* Title */-->
 	    <title th:text="'CartShop ' + ${page_title}">
 			CartShop | Page Title
         </title>
+        <!--/* Fonts */-->
 	    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Condensed:400,700'
               rel='stylesheet'
               type='text/css'/>
 	    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet"/>
+        <!--/* javascript stuff */-->
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
         </script>
 	    <script src="/js/site.js">
         </script>
+        <!--/* CSS files */-->
 	    <link rel="stylesheet"
               type="text/css"
               th:href="@{/css/normalize.css}"/>
 	    <link rel="stylesheet"
               type="text/css"
               th:href="@{/css/site.css}"/>
+        <!--/* icons on the browser tab */-->
+        <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+        <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
 	</head>
 	<body>
 		<header>
