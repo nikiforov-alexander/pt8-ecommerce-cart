@@ -69,8 +69,33 @@ public class CheckoutController {
 		return "checkout_1";
 	}
 
+    // Bug fix: Add form validation to the coupon code field in the first
+    // step of the checkout process.
+    // A coupon code will be considered valid if
+    // it contains between 5 and 10 characters.
+    // A unit test should also be added to verify that
+    // the added validation is working.
 	@RequestMapping(path="/coupon", method = RequestMethod.POST)
-	String postCouponCode(Model model, @ModelAttribute(value="couponCode") CouponCode couponCode) {
+	String postCouponCode(Model model,
+                          @ModelAttribute(value="couponCode") @Valid
+                          CouponCode couponCode,
+                          RedirectAttributes redirectAttributes,
+                          BindingResult result) {
+	    // if coupon code length is not valid
+        if (result.hasErrors()) {
+            // print error to logger: took from postShipping method
+            logger.error("Errors on fields: " + result.getFieldErrorCount());
+            // add coupon code flash attribute, so that user continue where he
+            // left off
+            model.addAttribute("couponCode", couponCode);
+            // add flash message to appear close to the problematic field
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.couponCode",
+                    result);
+            // set flash message on top? I don't think so. It is not in the
+            // code
+            // redirect back to checkout first stage
+            return "redirect:/checkout_1";
+        }
     	sCart.setCouponCode(couponCode);
    	
 		return "redirect:shipping";
