@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static com.acme.ecommerce.controller.WebConstants.*;
 
 
+@SuppressWarnings("SpringJavaAutowiringInspection")
 @Controller
 @RequestMapping("/checkout")
 @Scope("request")
