@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+<!--/* Define thymeleaf namespaces */-->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <!--/* replace head with the one in layout.html */-->
     <head th:replace="layout :: head('Checkout - Step 1')"></head>
     <body>
-    <header th:replace="layout :: header"></header>
+    <!--/* replace header with the one in layout */-->
+    <header th:replace="layout :: header('Checkout - Step 1')"></header>
         <section class="checkout">
             <h1><span>Checkout&nbsp;&nbsp;>&nbsp;&nbsp;</span>Verify Items</h1>
             <div th:each="productPurchase,iterStat : ${purchase.productPurchases}" class="cart-item">

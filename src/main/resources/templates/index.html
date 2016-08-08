@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head th:replace="layout :: head('Home')"></head>
     <body>
-    <header th:replace="layout :: header"></header>
+    <header th:replace="layout :: header('Home')"></header>
         <section class="product-listing">  
         	<div th:each="product,iterStat : ${products}" class="item">
                 <a th:href="@{/product/detail/{productId}(productId=${product.id})}"><img th:src="@{/product/{productId}/image(productId=${product.id})}"/></a>
