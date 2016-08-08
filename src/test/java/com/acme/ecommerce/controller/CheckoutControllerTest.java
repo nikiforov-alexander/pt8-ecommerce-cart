@@ -104,6 +104,28 @@ public class CheckoutControllerTest {
 	}
 
 	@Test
+	public void postingWrongCouponRedirectsBackToStepOnePage()
+			throws Exception {
+	    // When POST request is made to checkout coupon
+		// with wrong coupon code
+		// Then:
+		// - status should be 3xx - redirection
+		// - redirected URL should be Step 1 Checkout "/checkout/coupon"
+		mockMvc.perform(
+            MockMvcRequestBuilders
+                .post("/checkout/coupon")
+        )
+            .andDo(print())
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/checkout/coupon")
+		);
+//            .andExpect(
+//                flash().attribute(
+//                        "org.springframework.validation.BindingResult.couponCode",
+//                        hasProperty("fieldCountError", equalTo(1))))
+	}
+
+	@Test
 	public void shippingTest() throws Exception {
 		Product product = productBuilder();
 
