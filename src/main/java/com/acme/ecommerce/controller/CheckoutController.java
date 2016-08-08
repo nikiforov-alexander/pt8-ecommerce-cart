@@ -61,7 +61,11 @@ public class CheckoutController {
     		subTotal = computeSubtotal(purchase, couponCode);
     		
     		model.addAttribute("subTotal", subTotal);
-    		model.addAttribute("couponCode", couponCode);
+            // if user typed wrong coupon code, then this wrong one will be
+            // in model, so that we don't need to add one
+            if (!model.containsAttribute("couponCode")) {
+                model.addAttribute("couponCode", couponCode);
+            }
     	} else {
     		logger.error("No purchases Found!");
     		return("redirect:/error");
@@ -88,14 +92,14 @@ public class CheckoutController {
             logger.error("Errors on fields: " + result.getFieldErrorCount());
             // add coupon code flash attribute, so that user continue where he
             // left off
-            model.addAttribute("couponCode", couponCode);
+            redirectAttributes.addFlashAttribute("couponCode", couponCode);
             // add flash message to appear close to the problematic field
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.couponCode",
                     result);
             // set flash message on top? I don't think so. It is not in the
             // code
-            // redirect back to checkout first stage
-            return "redirect:/checkout_1";
+            // redirect back to checkout first stage: ("/coupon")
+            return "redirect:coupon";
         }
     	sCart.setCouponCode(couponCode);
    	
