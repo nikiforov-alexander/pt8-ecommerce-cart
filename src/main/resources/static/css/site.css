@@ -558,11 +558,12 @@ form .error input,
 form .error select {
 	border-color: #b50000;
 }
+/* changed styling a bit so that message is clearly seen */
 form .error-message {
 	position: relative;
 	color: #b50000;
-	top: 10px;
-	left: 0;
+	top: 15px;
+	left: -5px;
 	font-weight: 700;
 	font-size: 14px;
 	float: left;
