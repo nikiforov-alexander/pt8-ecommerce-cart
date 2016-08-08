@@ -80,8 +80,7 @@ public class CheckoutController {
     // A unit test should also be added to verify that
     // the added validation is working.
 	@RequestMapping(path="/coupon", method = RequestMethod.POST)
-	String postCouponCode(Model model,
-                          @ModelAttribute(value="couponCode") @Valid
+	String postCouponCode( @ModelAttribute(value="couponCode") @Valid
                           CouponCode couponCode,
                           BindingResult result,
                           RedirectAttributes redirectAttributes
