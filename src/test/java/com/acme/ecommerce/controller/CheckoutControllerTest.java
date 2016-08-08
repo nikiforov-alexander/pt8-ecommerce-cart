@@ -80,8 +80,20 @@ public class CheckoutControllerTest {
 				.andExpect(redirectedUrl("/error"));
 	}
 
+	// Bug fix: Add form validation to the coupon code field in the first step
+	// of the checkout process. A coupon code will be considered valid if it
+	// contains between 5 and 10 characters. A unit test should also be added
+	// to verify that the added validation is working.
+
+	// this test checks that valid 5 letters code gets through to the
+	// shipping page
 	@Test
 	public void postCouponTest() throws Exception {
+		// When POST request is made to checkout coupon
+		// with right coupon code
+		// Then:
+		// - status should be 3xx - redirection
+		// - redirected url should be "shipping"
 		mockMvc.perform(
 				MockMvcRequestBuilders
 						.post("/checkout/coupon")
