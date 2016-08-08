@@ -75,12 +75,12 @@ public class CheckoutController {
     // it contains between 5 and 10 characters.
     // A unit test should also be added to verify that
     // the added validation is working.
-	@RequestMapping(path="/coupon", method = RequestMethod.POST)
+	@RequestMapping(path="/checkout/coupon", method = RequestMethod.POST)
 	String postCouponCode(Model model,
                           @ModelAttribute(value="couponCode") @Valid
                           CouponCode couponCode,
                           RedirectAttributes redirectAttributes,
-                          BindingResult result) {
+                          final BindingResult result) {
 	    // if coupon code length is not valid
         if (result.hasErrors()) {
             // print error to logger: took from postShipping method
@@ -131,7 +131,11 @@ public class CheckoutController {
 	}
 	
 	@RequestMapping(path="/shipping", method = RequestMethod.POST)
-	String postShipping(@ModelAttribute(value="shippingAddress") @Valid Address shippingAddress, final BindingResult result, RedirectAttributes redirectAttributes) {
+	String postShipping(
+			@ModelAttribute(value="shippingAddress") @Valid
+			Address shippingAddress,
+			final BindingResult result,
+			RedirectAttributes redirectAttributes) {
 
     	if(result.hasErrors()) {
     		logger.error("Errors on fields: " + result.getFieldErrorCount());
