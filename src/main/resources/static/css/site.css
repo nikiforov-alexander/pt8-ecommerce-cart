@@ -235,6 +235,16 @@ strong {
 {
     display: inline;
 }
+.pagination.flash.failure {
+    background-color: lightcoral;
+	color: aliceblue;
+	position: relative;
+}
+.pagination.flash.failure p {
+    margin: 0px;
+    position: relative;
+    top: 13px;
+}
 
 
 /* --- Single Item Product Styles --- */
