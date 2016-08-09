@@ -34,20 +34,24 @@
                of the page. Argument is used in Page Title
         */-->
 		<header th:fragment="header(page_title)">
+			<!--/* Link to home page */-->
 	        <a th:text="'CartShop : ' + ${page_title}" class="logo"
 			   th:href="@{/product/}">
 				CartShop : Page Title
 			</a>
 	        <nav>
 	            <ul>
+					<!--/* Link to about page */-->
 	                <li>
-						<a th:href="@{/about}">About</a>
+						<a th:href="@{/product/about}">About</a>
 					</li>
+					<!--/* Link to FAQ page: leads to nowhere */-->
 	                <li>
 						<a href="#">FAQ</a>
 					</li>
+					<!--/* Link to cart */-->
 	                <li><a class="button icon-right"
-						   href="/cart">
+						   th:href="@{/cart}">
 							View Cart
 							<i class="material-icons">shopping_cart</i>
 						</a>
