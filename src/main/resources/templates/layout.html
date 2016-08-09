@@ -35,7 +35,7 @@
         */-->
 		<header th:fragment="header(page_title)">
 	        <a th:text="'CartShop : ' + ${page_title}" class="logo"
-			   href="/product/">
+			   th:href="@{/product/}">
 				CartShop : Page Title
 			</a>
 	        <nav>
