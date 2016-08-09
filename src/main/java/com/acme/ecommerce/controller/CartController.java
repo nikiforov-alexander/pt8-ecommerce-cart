@@ -93,8 +93,11 @@ public class CartController {
 			Integer numberOfProductsInDatabase =
 					addProduct.getQuantity();
 			if (quantity > numberOfProductsInDatabase) {
+			    // print error in logger
 				logger.error("There are not enough products left");
+				// set redirect url back to products page
 				redirect.setUrl("/product/");
+				// add flash message with failure on top of the page
 				redirectAttributes.addFlashAttribute("flash",
 						new FlashMessage(
 								"Sorry! No more products " +
