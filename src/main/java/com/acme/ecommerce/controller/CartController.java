@@ -4,7 +4,7 @@ import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.domain.ProductPurchase;
 import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
-import com.acme.ecommerce.exception.NotEnoughProductsInStock;
+import com.acme.ecommerce.exception.NotFoundException;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
 import com.acme.ecommerce.web.FlashMessage;
@@ -252,7 +252,8 @@ public class CartController {
 		
     	return redirect;
     }
-	@ExceptionHandler(NotEnoughProductsInStock.class)
+
+	@ExceptionHandler(NotFoundException.class)
 	public String exceptionHandler(Model model, Exception exception) {
 		model.addAttribute("errorMessage", exception.getMessage());
 	    return "/error";
