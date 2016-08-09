@@ -126,17 +126,18 @@ public class CheckoutControllerTest {
 		);
 	}
     @Test
-    public void postingEmptyCouponRedirectsBackToStepOnePage()
+    public void postingCouponWithNoRequestParamsRedirectsBackToStepOnePage()
             throws Exception {
         // When POST request is made to checkout coupon
-        // with empty coupon code
+        // with no params sent of POST request
         // Then:
         // - status should be 3xx - redirection
         // - couponCode object should have 1 field error
         // - redirected URL should be Step 1 Checkout "/checkout/coupon"
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/checkout/coupon"))
+                        .post("/checkout/coupon")
+				)
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute(
@@ -145,6 +146,28 @@ public class CheckoutControllerTest {
                 .andExpect(redirectedUrl("coupon")
                 );
     }
+	@Test
+	public void postingEmptyCouponRedirectsBackToStepOnePage()
+			throws Exception {
+		// When POST request is made to checkout coupon
+		// with no empty "code" parameter of POST request
+		// Then:
+		// - status should be 3xx - redirection
+		// - couponCode object should have 2 field errors:
+		//   for both @NotEmpty and @Size constraints
+		// - redirected URL should be Step 1 Checkout "/checkout/coupon"
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/checkout/coupon")
+						.param("code", ""))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(flash().attribute(
+						"org.springframework.validation.BindingResult.couponCode",
+						hasProperty("fieldErrorCount", equalTo(2))))
+				.andExpect(redirectedUrl("coupon")
+				);
+	}
 
 	@Test
 	public void shippingTest() throws Exception {
