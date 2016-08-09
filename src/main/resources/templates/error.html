@@ -5,7 +5,11 @@
 		<header th:replace="layout :: header('Error')"></header>
 	    <section class="cart">
             <h1>Error</h1>
-            <strong>
+            <strong th:if="${errorMessage == null}">
+				This is error page. How to get model attributes here: no idea.
+			</strong>
+			<strong th:if="${errorMessage != null}"
+					th:text="${errorMessage}">
 				This is error page. How to get model attributes here: no idea.
 			</strong>
 		</section>
