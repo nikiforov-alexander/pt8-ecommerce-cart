@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <!--/* repeatable head from layout: argument is title of the page */-->
     <head th:replace="layout :: head('Home')"></head>
     <body>
+    <!--/* repeatable header from layout: argument is title of the header */-->
     <header th:replace="layout :: header('Home')"></header>
+        <!--/* Flash message displayed on success or failure, see layout */-->
+    	<div th:replace="layout :: flash"></div>
         <section class="product-listing">  
         	<div th:each="product,iterStat : ${products}" class="item">
                 <a th:href="@{/product/detail/{productId}(productId=${product.id})}"><img th:src="@{/product/{productId}/image(productId=${product.id})}"/></a>
