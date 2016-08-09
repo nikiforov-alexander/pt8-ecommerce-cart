@@ -13,11 +13,11 @@
               type='text/css'/>
 	    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet"/>
-        <!--/* javascript stuff */-->
+        <!--/* javascript CDN dependencies */-->
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
         </script>
-	    <script src="/js/site.js">
-        </script>
+		<!--/* local javascript */-->
+	    <script th:src="@{/js/site.js}"></script>
         <!--/* CSS files */-->
 	    <link rel="stylesheet"
               type="text/css"
@@ -34,20 +34,24 @@
                of the page. Argument is used in Page Title
         */-->
 		<header th:fragment="header(page_title)">
+			<!--/* Link to home page */-->
 	        <a th:text="'CartShop : ' + ${page_title}" class="logo"
-			   href="/product/">
+			   th:href="@{/product/}">
 				CartShop : Page Title
 			</a>
 	        <nav>
 	            <ul>
+					<!--/* Link to about page */-->
 	                <li>
-						<a th:href="@{/about}">About</a>
+						<a th:href="@{/product/about}">About</a>
 					</li>
+					<!--/* Link to FAQ page: leads to nowhere */-->
 	                <li>
 						<a href="#">FAQ</a>
 					</li>
+					<!--/* Link to cart */-->
 	                <li><a class="button icon-right"
-						   href="/cart">
+						   th:href="@{/cart}">
 							View Cart
 							<i class="material-icons">shopping_cart</i>
 						</a>
