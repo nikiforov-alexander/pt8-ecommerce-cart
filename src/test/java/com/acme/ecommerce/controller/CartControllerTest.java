@@ -7,6 +7,8 @@ import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
+import com.acme.ecommerce.web.FlashMessage;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,6 +100,46 @@ public class CartControllerTest {
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/product/"));
+	}
+	// Bug fix: Ensure that enough products are in stock before adding to
+    // the shopping cart.
+    // Whether adding products to the cart from product detail pages or
+    // updating an product’s quantity from the cart view,
+    // more products than are in stock can be added to the cart.
+    // Fix this issue and add a unit test to cover this scenario.
+
+    // This test checks up if POST request adding more items that we
+    // have in db of this type was done
+	@Test
+	public void addToCartPostRequestWithQuantityMoreThanInDbFails()
+            throws Exception {
+	    // Arrange product: first product with three items
+		Product product = productBuilder();
+        // Arrange product return by service: when service will be called
+        // in controller: 1-st product will be returned
+		when(productService.findById(1L)).thenReturn(product);
+
+        // When POST request to add new product to cart ("/cart/add") is
+        // made, with 10 products, and product id = 1
+        // Then:
+        // - status is 3xx - redirection
+        // - url of redirected page is "/product"
+        // - flash message has FAILURE status
+		mockMvc.perform(
+		        MockMvcRequestBuilders
+                        .post("/cart/add")
+                        .param("quantity", "10")
+                        .param("productId", "1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/product/"))
+                .andExpect(flash().attribute(
+                        "flash",
+                        Matchers.hasProperty("status",
+                                Matchers.equalTo(FlashMessage.Status.FAILURE)
+                            )
+                        )
+                );
 	}
 
 	@Test
