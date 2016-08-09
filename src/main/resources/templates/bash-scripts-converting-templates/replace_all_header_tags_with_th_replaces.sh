@@ -23,7 +23,7 @@ check_if_layout_exists () {
     replace_header () {
         awk '
             $1 == "<header>" {
-                printf("    <header th:replace=\"${layout :: header}\">")
+                printf("    <header th:replace=\"layout :: header\">")
                 getline
                 while ($1 != "</header>") {
                     getline

@@ -562,7 +562,7 @@ form .error-message {
 	position: relative;
 	color: #b50000;
 	top: 10px;
-	left: 0;
+	left: 0px;
 	font-weight: 700;
 	font-size: 14px;
 	float: left;

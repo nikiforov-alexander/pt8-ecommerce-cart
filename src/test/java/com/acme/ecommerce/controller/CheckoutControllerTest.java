@@ -4,6 +4,7 @@ import com.acme.ecommerce.Application;
 import com.acme.ecommerce.domain.*;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,11 +81,92 @@ public class CheckoutControllerTest {
 				.andExpect(redirectedUrl("/error"));
 	}
 
+	// Bug fix: Add form validation to the coupon code field in the first step
+	// of the checkout process. A coupon code will be considered valid if it
+	// contains between 5 and 10 characters. A unit test should also be added
+	// to verify that the added validation is working.
+
+	// this test checks that valid 5 letters code gets through to the
+	// shipping page
 	@Test
 	public void postCouponTest() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post("/checkout/coupon").param("couponCode", "abcd")).andDo(print())
+		// When POST request is made to checkout coupon
+		// with right coupon code
+		// Then:
+		// - status should be 3xx - redirection
+		// - redirected url should be "shipping"
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/checkout/coupon")
+						.param("code", "abcde"))
+				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("shipping"));
+	}
+
+	@Test
+	public void postingWrongCouponRedirectsBackToStepOnePage()
+			throws Exception {
+	    // When POST request is made to checkout coupon
+		// with wrong coupon code of 3 characters long
+		// Then:
+		// - status should be 3xx - redirection
+        // - couponCode object should have 1 field error
+		// - redirected URL should be Step 1 Checkout "/checkout/coupon"
+		mockMvc.perform(
+            MockMvcRequestBuilders
+                .post("/checkout/coupon")
+                .param("code", "abc"))
+            .andDo(print())
+            .andExpect(status().is3xxRedirection())
+            .andExpect(flash().attribute(
+                    "org.springframework.validation.BindingResult.couponCode",
+                    hasProperty("fieldErrorCount", equalTo(1))))
+            .andExpect(redirectedUrl("coupon")
+		);
+	}
+    @Test
+    public void postingCouponWithNoRequestParamsRedirectsBackToStepOnePage()
+            throws Exception {
+        // When POST request is made to checkout coupon
+        // with no params sent of POST request
+        // Then:
+        // - status should be 3xx - redirection
+        // - couponCode object should have 1 field error
+        // - redirected URL should be Step 1 Checkout "/checkout/coupon"
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/checkout/coupon")
+				)
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute(
+                        "org.springframework.validation.BindingResult.couponCode",
+                        hasProperty("fieldErrorCount", equalTo(1))))
+                .andExpect(redirectedUrl("coupon")
+                );
+    }
+	@Test
+	public void postingEmptyCouponRedirectsBackToStepOnePage()
+			throws Exception {
+		// When POST request is made to checkout coupon
+		// with no empty "code" parameter of POST request
+		// Then:
+		// - status should be 3xx - redirection
+		// - couponCode object should have 2 field errors:
+		//   for both @NotEmpty and @Size constraints
+		// - redirected URL should be Step 1 Checkout "/checkout/coupon"
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/checkout/coupon")
+						.param("code", ""))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(flash().attribute(
+						"org.springframework.validation.BindingResult.couponCode",
+						hasProperty("fieldErrorCount", equalTo(2))))
+				.andExpect(redirectedUrl("coupon")
+				);
 	}
 
 	@Test
@@ -139,18 +221,18 @@ public class CheckoutControllerTest {
 	@Test
 	public void postShippingTestValidationFail() throws Exception {
 
-		Product product = productBuilder();
-
-		when(productService.findById(1L)).thenReturn(product);
-
-		Purchase purchase = purchaseBuilder(product);
-		when(sCart.getPurchase()).thenReturn(purchase);
-
-		CouponCode coupon = new CouponCode();
-		coupon.setCode("abcd");
-		when(sCart.getCouponCode()).thenReturn(coupon);
-
-		when(purchaseService.save(purchase)).thenReturn(purchase);
+//		Product product = productBuilder();
+//
+//		when(productService.findById(1L)).thenReturn(product);
+//
+//		Purchase purchase = purchaseBuilder(product);
+//		when(sCart.getPurchase()).thenReturn(purchase);
+//
+//		CouponCode coupon = new CouponCode();
+//		coupon.setCode("abcd");
+//		when(sCart.getCouponCode()).thenReturn(coupon);
+//
+//		when(purchaseService.save(purchase)).thenReturn(purchase);
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/checkout/shipping")).andDo(print())
 				.andExpect(flash().attribute("org.springframework.validation.BindingResult.shippingAddress",
