@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+<!--/* Define thymeleaf namespaces */-->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="${layout :: head('Checkout - Step 1')}"></head>
+    <!--/* replace head with the one in layout.html */-->
+    <head th:replace="layout :: head('Checkout - Step 1')"></head>
     <body>
-    <header th:replace="${layout :: header}"></header>
+    <!--/* replace header with the one in layout */-->
+    <header th:replace="layout :: header('Checkout - Step 1')"></header>
         <section class="checkout">
             <h1><span>Checkout&nbsp;&nbsp;>&nbsp;&nbsp;</span>Verify Items</h1>
             <div th:each="productPurchase,iterStat : ${purchase.productPurchases}" class="cart-item">
@@ -13,9 +16,28 @@
 	                <span th:inline="text" class="item-quantity">Quantity: [[${productPurchase.quantity}]]</span>
 	            </div>
             </div>
-            <div class="coupon-code">
-                <form id="couponForm" action="#" th:action="@{/checkout/coupon}" th:object="${couponCode}" method="post">
-                    <input type="text" th:field="*{code}" placeholder="Enter coupon code"/>
+            <!--/* div with coupon code: Bug fix #1 */-->
+            <div class="coupon-code" >
+                <!--/* for to submit coupon code: here "id" is used with which
+                       later JavaScript finds which form was submitted
+                */-->
+                <form id="couponForm"
+                      action="#"
+                      th:action="@{/checkout/coupon}"
+                      th:object="${couponCode}"
+                      method="post">
+                    <!--/* following div will have "error" class if user input
+                           wrong coupon code
+                    */-->
+                    <div th:classappend="${#fields.hasErrors('code')}? 'error' : ''">
+                        <!--/* Error message why code is wrong */-->
+                        <p th:errors="*{code}">
+                            Error
+                        </p>
+                        <input type="text"
+                               th:field="*{code}"
+                               placeholder="Enter coupon code"/>
+                    </div>
                 </form>
             </div>
             <div class="subtotal">

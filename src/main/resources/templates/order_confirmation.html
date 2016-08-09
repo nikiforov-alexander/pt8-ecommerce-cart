@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="${layout :: head('Order Confirmation')}"></head>
+    <head th:replace="layout :: head('Order Confirmation')"></head>
     <body>
-    <header th:replace="${layout :: header}"></header>
+    <header th:replace="layout :: header('Order Confirmation')"></header>
         <section class="checkout">
             <h1>Your Order is Complete!</h1>
             <div class="checkout-container">

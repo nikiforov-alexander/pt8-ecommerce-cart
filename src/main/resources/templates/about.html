@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="${layout :: head('About')}" lang="en"></head>
+	<head th:replace="layout :: head('About')" lang="en"></head>
 	<body>
-		<header th:replace="${layout :: header}"></header>
+		<header th:replace="layout :: header('About')"></header>
 	    <section class="cart">
             <h1>About</h1>
             <strong> This is my CartShop. There are many like it, but this one is mine.</strong>

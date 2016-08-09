@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="${layout :: head('Cart')}"></head>
+    <head th:replace="layout :: head('Cart')"></head>
     <body>
-    <header th:replace="${layout :: header}"></header>
+    <header th:replace="layout :: header('Cart')"></header>
         <section class="cart">
             <h1>Your Cart</h1>
             <div th:if="${purchase != null and not #lists.isEmpty(purchase.productPurchases)}">
