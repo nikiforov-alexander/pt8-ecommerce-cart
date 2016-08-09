@@ -4,17 +4,21 @@ import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.domain.ProductPurchase;
 import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
+import com.acme.ecommerce.exception.NotEnoughProductsInStock;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
+import com.acme.ecommerce.web.FlashMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpSession;
@@ -60,17 +64,46 @@ public class CartController {
     	}
         return "cart";
     }
-    
+
+	// Bug fix: Ensure that enough products are in stock before adding
+	//   to the shopping cart.
+	//   Whether adding products to the cart from product detail pages
+	// 	 or updating an product’s quantity from the cart view,
+	//   more products than are in stock can be added to the cart.
+	//   Fix this issue and add a unit test to cover this scenario.
+	//   This is exactly the place to fix stuff ?
     @RequestMapping(path="/add", method = RequestMethod.POST)
-    public RedirectView addToCart(@ModelAttribute(value="productId") long productId, @ModelAttribute(value="quantity") int quantity) {
+    public RedirectView addToCart(
+    		@ModelAttribute(value="productId") long productId,
+			@ModelAttribute(value="quantity") int quantity,
+			RedirectAttributes redirectAttributes) {
     	boolean productAlreadyInCart = false;
     	RedirectView redirect = new RedirectView("/product/");
 		redirect.setExposeModelAttributes(false);
     	
     	Product addProduct = productService.findById(productId);
+
 		if (addProduct != null) {
 	    	logger.debug("Adding Product: " + addProduct.getId());
-	    	
+
+			// Before we get into cycle of purchase, lets check whether
+			// quantity
+			// specified is less than we have in database
+			// here we set number of products available
+			Integer numberOfProductsInDatabase =
+					addProduct.getQuantity();
+			if (quantity > numberOfProductsInDatabase) {
+				logger.error("There are not enough products left");
+				redirect.setUrl("/product/");
+				redirectAttributes.addFlashAttribute("flash",
+						new FlashMessage(
+								"Sorry! No more products " +
+										"of this type is left",
+								FlashMessage.Status.FAILURE
+						));
+				return redirect;
+			}
+
     		Purchase purchase = sCart.getPurchase();
     		if (purchase == null) {
     			purchase = new Purchase();
@@ -79,8 +112,30 @@ public class CartController {
     			for (ProductPurchase pp : purchase.getProductPurchases()) {
     				if (pp.getProduct() != null) {
     					if (pp.getProduct().getId().equals(productId)) {
-    						pp.setQuantity(pp.getQuantity() + quantity);
-    						productAlreadyInCart = true;
+							// here we check situation when quantity user
+							// specified
+							// was less than in db (like 1), but when added with
+							// already existing amount it becomes > than in db.
+							// Example: 2 Items in database: 1 is quantity user
+							// 	 added, 2 items were already in his cart, 2+1>3
+							// 	 ->	 failure
+							if (pp.getQuantity() + quantity >
+									numberOfProductsInDatabase) {
+							    // print error to logger
+								logger.error("There are not enough products left");
+								// redirect to all products page
+                                redirect.setUrl("/product/");
+                                // add flash message displayed on top
+								redirectAttributes.addFlashAttribute("flash",
+										new FlashMessage(
+                                            "Sorry! No more products " +
+													"of this type is left",
+                                            FlashMessage.Status.FAILURE
+										));
+								return redirect;
+							}
+							pp.setQuantity(pp.getQuantity() + quantity);
+							productAlreadyInCart = true;
     						break;
     					}
     				}
@@ -194,4 +249,11 @@ public class CartController {
 		
     	return redirect;
     }
+	@ExceptionHandler(NotEnoughProductsInStock.class)
+	public String exceptionHandler(Model model, Exception exception) {
+		model.addAttribute("errorMessage", exception.getMessage());
+	    return "/error";
+	}
+
+
 }
