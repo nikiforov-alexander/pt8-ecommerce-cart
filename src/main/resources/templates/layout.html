@@ -59,5 +59,17 @@
 	            </ul>
 	        </nav>
 	    </header>
+        <!--/* Flash message on top of the page, if upon redirect flash
+               attribute with flash will be there, this div will be active
+        */-->
+        <div class="pagination flash"
+             th:fragment="flash"
+             th:if="${flash != null}"
+             th:classappend="${#strings.toLowerCase(flash.status)}">
+            <!--/* Flash message body */-->
+            <p th:text="${flash.message}">
+                Flash Message Body
+            </p>
+        </div>
 	</body>
 </html>
