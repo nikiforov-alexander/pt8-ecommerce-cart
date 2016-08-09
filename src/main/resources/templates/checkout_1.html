@@ -30,13 +30,10 @@
                            wrong coupon code
                     */-->
                     <div th:classappend="${#fields.hasErrors('code')}? 'error' : ''">
-                        <!--/* Error message why code is wrong. Original class
-                               "error-message" is used. Styling changed just a bit
-                         */-->
-                        <span class="error-message"
-                              th:errors="*{code}">
+                        <!--/* Error message why code is wrong */-->
+                        <p th:errors="*{code}">
                             Error
-                        </span>
+                        </p>
                         <input type="text"
                                th:field="*{code}"
                                placeholder="Enter coupon code"/>
