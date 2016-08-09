@@ -13,11 +13,11 @@
               type='text/css'/>
 	    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet"/>
-        <!--/* javascript stuff */-->
+        <!--/* javascript CDN dependencies */-->
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
         </script>
-	    <script src="/js/site.js">
-        </script>
+		<!--/* local javascript */-->
+	    <script th:src="@{/js/site.js}"></script>
         <!--/* CSS files */-->
 	    <link rel="stylesheet"
               type="text/css"
