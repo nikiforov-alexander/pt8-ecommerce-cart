@@ -178,6 +178,17 @@ Under construction...
 
 ### Tasks
 1. <a id="task-1"></a>
+    Bug fix: Add form validation to the coupon code field in the first 
+    step of the checkout process. 
+    A coupon code will be considered valid if it contains between 
+    5 and 10 characters. 
+    A unit test should also be added to verify that the added 
+    validation is working.
+    <hr>
+    1. First of all I added `@NotEmpty` annotation and `@Size` 
+        annotations to [CouponCode][CouponCode#L1] `code` field.
+<hr>
+2. <a id="task-2"></a>
 
 
 
