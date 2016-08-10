@@ -45,7 +45,7 @@
 <!--Links-->
 <!-- settings files -->
 [eCommerce.properties]:
-    ./properties/eCommerce.properties ./properties/eCommerce.properties
+    ./properties/eCommerce.properties "./properties/eCommerce.properties"
 [application.properties]:
     src/main/resources/application.properties "Spring application properties file: application.properties"
 [build.gradle]:
