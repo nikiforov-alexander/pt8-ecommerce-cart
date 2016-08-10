@@ -239,9 +239,28 @@ Under construction...
         be two scenarios like in `addToCart`. Test in 
         [CartControllerTest] is called:
         `updatingCartWithQuantityMoreThanInDbFails`
-
-3. <a id="task-3"></a>
 <hr>
+3. <a id="task-3"></a>
+    Bug fix: Update the order confirmation view template to mask all 
+    but the last 4 digits of the credit card number.
+    <hr>
+    In order to do that I did not change thymeleaf view, I decided
+    to change attribute that passed to model, so that when actual
+    request is made we send already coded number that looks like
+    "####-1234". Number of hash signs can be different, because 
+    number of credit card characters can be from 13 to 19. 
+    <br>
+    In order to generate this "hidden" credit card number
+    I implemented new method `makeCreditCardNumberHidden`
+    in [CheckoutController].
+    And in actual `checkoutConfirmation` method I just pass
+    the return value from this method.
+    <br>
+    The method itself is tested in [CheckoutControllerTest],
+    and it is called 
+    `creditCardNumberShouldBeSuccessfullyHiddenByIntroducedMethod`
+<hr>
+4. <a id="task-4"></a>
 
 
 
