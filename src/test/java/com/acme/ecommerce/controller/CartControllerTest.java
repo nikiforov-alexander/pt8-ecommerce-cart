@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -213,6 +214,44 @@ public class CartControllerTest {
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/cart"));
+	}
+
+	// Bug fix #2 - updating with quantity more than there are in db fails
+	@Test
+	public void updatingCartWithQuantityMoreThanInDbFails()
+			throws Exception {
+		// Arrange product returned when findById is returned
+		Product product = productBuilder();
+		when(productService.findById(1L)).thenReturn(product);
+        // Arrange purchase returned when cart.getPurchase is called
+		Purchase purchase = purchaseBuilder(product);
+		when(sCart.getPurchase()).thenReturn(purchase);
+
+		// Act, and Assert:
+		// When :
+		// 	 POST request is made to update cart, with new quantity
+		// 	 more than quantity of items in db,
+		// Then:
+		//   - status should be of 3xx - redirection
+		//   - redirected URL should be back to cart
+		//   - flash message with status FAILURE should be send with
+		//     redirect attributes
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/update")
+						.param("newQuantity", "10")
+						.param("productId", "1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/cart"))
+				.andExpect(
+						flash().attribute(
+							"flash", Matchers.hasProperty(
+									"status", Matchers.equalTo(
+											FlashMessage.Status.FAILURE)
+							)
+						)
+				);
 	}
 
 	@Test
