@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.acme.ecommerce.controller.WebConstants.*;
@@ -248,7 +249,45 @@ public class CheckoutController {
    	
 		return "redirect:confirmation";
 	}
-	
+
+	// Bug fix #3: Update the order confirmation view template to mask
+	// all but the last 4 digits of the credit card number.
+    // Solution: I introduced private
+	// method below is doing exactly that: it makes credit card number
+	// hidden. It later sends this hidden number to the model.
+    // access is package-private: to test the method: see
+	// CheckoutControllerTest for more
+
+	/**
+	 * package-private method converting credit card number to hidden credit
+	 * card number. Tested in CheckoutControllerTest
+	 * @param creditCardNumber : should be more that 4 digits and not-null
+	 *                         no checks here, because this method will not
+	 *                         be used with wrong credit data, it is checked
+	 *                         elsewhere, when user submits credit card number
+	 * @return : credit card number with all characters hidden except for
+	 *         4 last ones
+	 */
+	String makeCreditCardNumberHidden(String creditCardNumber) {
+		// get index of fourth digit from the end, e.g
+		// when we had number 12345 - length = 5,
+		// then index will be 5 - 4 = 1, i.e. index of number "2".
+		int indexOfFourthDigitFromTheEnd =
+				creditCardNumber.length() - 4;
+		// make char array: fill with chars of credit card number length - 4,
+		// Example: creditCardNumber 12345, char array will be
+		// of length 5-1 = 4
+		char[] charArrayWithHiddenNumbers =
+				new char[creditCardNumber.length() - 4];
+		// fill char array with *
+		Arrays.fill(charArrayWithHiddenNumbers, '*');
+		// return String from char array + substring of creditCardNumber
+		return new String(charArrayWithHiddenNumbers) +
+				creditCardNumber.substring(
+                indexOfFourthDigitFromTheEnd
+        		);
+	}
+
 	@RequestMapping("/confirmation")
 	String checkoutConfirmation(Model model) {
     	Purchase purchase = sCart.getPurchase();
@@ -269,7 +308,12 @@ public class CheckoutController {
     		model.addAttribute("orderNumber", purchase.getOrderNumber());
     		model.addAttribute("shippingAddress", purchase.getShippingAddress());
     		model.addAttribute("billingAddress", purchase.getBillingAddress());
-    		model.addAttribute("creditCard", purchase.getCreditCardNumber());
+			// credit card number is send hidden, to ensure privacy
+			model.addAttribute("creditCard",
+					makeCreditCardNumberHidden(
+							purchase.getCreditCardNumber()
+					)
+			);
     	} else {
     		logger.error("No purchases Found!");
     		return("redirect:/error");
@@ -277,7 +321,8 @@ public class CheckoutController {
     	
 		return "order_confirmation";
 	}
-	
+
+
 	@RequestMapping(value = "/email", method = RequestMethod.GET)
 	public void getFile(HttpServletResponse response) {
 		// simulating an email receipt
