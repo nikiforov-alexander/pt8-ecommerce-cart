@@ -235,6 +235,18 @@ strong {
 {
     display: inline;
 }
+/* flash messages on top of the page styling div*/
+.pagination.flash.failure {
+    background-color: lightcoral;
+	color: aliceblue;
+	position: relative;
+}
+/* <p> inside: text message styling */
+.pagination.flash.failure p {
+    margin: 0px;
+    position: relative;
+    top: 13px;
+}
 
 
 /* --- Single Item Product Styles --- */

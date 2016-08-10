@@ -7,6 +7,8 @@ import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
+import com.acme.ecommerce.web.FlashMessage;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -99,6 +102,93 @@ public class CartControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/product/"));
 	}
+	// Bug fix: Ensure that enough products are in stock before adding to
+    // the shopping cart.
+    // Whether adding products to the cart from product detail pages or
+    // updating an product’s quantity from the cart view,
+    // more products than are in stock can be added to the cart.
+    // Fix this issue and add a unit test to cover this scenario.
+
+    // This test checks up if POST request adding more items that we
+    // have in db of this type was done
+	@Test
+	public void addToCartPostRequestWithQuantityMoreThanInDbFails()
+            throws Exception {
+	    // Arrange product: first product with three items
+		Product product = productBuilder();
+        // Arrange product return by service: when service will be called
+        // in controller: 1-st product will be returned
+		when(productService.findById(1L)).thenReturn(product);
+
+        // When POST request to add new product to cart ("/cart/add") is
+        // made, with 10 products, and product id = 1
+        // Then:
+        // - status is 3xx - redirection
+        // - url of redirected page is "/product"
+        // - flash message has FAILURE status
+		mockMvc.perform(
+		        MockMvcRequestBuilders
+                        .post("/cart/add")
+                        .param("quantity", "10")
+                        .param("productId", "1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/product/"))
+                .andExpect(flash().attribute(
+                        "flash",
+                        Matchers.hasProperty("status",
+                                Matchers.equalTo(FlashMessage.Status.FAILURE)
+                            )
+                        )
+                );
+	}
+    // This test checks up if POST request adding more items that we
+    // have in db of this type was done, but in a different manner. This
+    // error is thrown when cart.quantity of this product plus
+    // some quantity should be less than quantity in db.
+    // Example:
+    // - 3 products in stock
+    // - cart has already 3
+    // - user clicks add to cart: 3+1 > 3 -> error
+    @Test
+    public void addToCartPostRequestWithQuantityPlusCartQuantityMoreThanInDbFails()
+            throws Exception {
+        // Arrange product: first product with three items
+        Product product = productBuilder();
+        // Arrange product return by service: when service will be called
+        // in controller: 1-st product will be returned
+        when(productService.findById(1L)).thenReturn(product);
+
+        // Arrange purchase: we build purchase with quantity equal to number
+        // of items in stock. See below
+        Purchase purchase =
+                purchaseBuilderWithQuantityEqualToQuantityInDb(product);
+        // Arrange returning this purchase when it will be called in controller
+        when(sCart.getPurchase()).thenReturn(purchase);
+
+        // When POST request to add new product to cart ("/cart/add")
+        // with quantity equal to number of products in database is
+        // made, and one last product will overfill cart
+        // Then:
+        // - status is 3xx - redirection
+        // - url of redirected page is "/product"
+        // - flash message has FAILURE status
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/cart/add")
+                        .param("quantity", "1")
+                        .param("productId", "1"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/product/"))
+                .andExpect(flash().attribute(
+                        "flash",
+                        Matchers.hasProperty("status",
+                                Matchers.equalTo(FlashMessage.Status.FAILURE)
+                        )
+                    )
+                );
+    }
 
 	@Test
 	public void addUnknownToCartTest() throws Exception {
@@ -124,6 +214,44 @@ public class CartControllerTest {
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/cart"));
+	}
+
+	// Bug fix #2 - updating with quantity more than there are in db fails
+	@Test
+	public void updatingCartWithQuantityMoreThanInDbFails()
+			throws Exception {
+		// Arrange product returned when findById is returned
+		Product product = productBuilder();
+		when(productService.findById(1L)).thenReturn(product);
+        // Arrange purchase returned when cart.getPurchase is called
+		Purchase purchase = purchaseBuilder(product);
+		when(sCart.getPurchase()).thenReturn(purchase);
+
+		// Act, and Assert:
+		// When :
+		// 	 POST request is made to update cart, with new quantity
+		// 	 more than quantity of items in db,
+		// Then:
+		//   - status should be of 3xx - redirection
+		//   - redirected URL should be back to cart
+		//   - flash message with status FAILURE should be send with
+		//     redirect attributes
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/update")
+						.param("newQuantity", "10")
+						.param("productId", "1"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/cart"))
+				.andExpect(
+						flash().attribute(
+							"flash", Matchers.hasProperty(
+									"status", Matchers.equalTo(
+											FlashMessage.Status.FAILURE)
+							)
+						)
+				);
 	}
 
 	@Test
@@ -282,7 +410,7 @@ public class CartControllerTest {
 		pp.setProductPurchaseId(1L);
 		pp.setQuantity(1);
 		pp.setProduct(product);
-		List<ProductPurchase> ppList = new ArrayList<ProductPurchase>();
+		List<ProductPurchase> ppList = new ArrayList<>();
 		ppList.add(pp);
 
 		Purchase purchase = new Purchase();
@@ -290,4 +418,24 @@ public class CartControllerTest {
 		purchase.setProductPurchases(ppList);
 		return purchase;
 	}
+
+	// constructor used to model behaviour in method:
+    //  addToCartPostRequestWithQuantityPlusCartQuantityMoreThanInDbFails
+    //  the important line : to set quantity to product quantity
+    private Purchase
+    purchaseBuilderWithQuantityEqualToQuantityInDb(Product product) {
+        ProductPurchase pp = new ProductPurchase();
+        pp.setProductPurchaseId(1L);
+        // important line: set quantity to product quantity, so that
+        // when add one more product to cart, it should throw error
+        pp.setQuantity(product.getQuantity());
+        pp.setProduct(product);
+        List<ProductPurchase> ppList = new ArrayList<>();
+        ppList.add(pp);
+
+        Purchase purchase = new Purchase();
+        purchase.setId(1L);
+        purchase.setProductPurchases(ppList);
+        return purchase;
+    }
 }
