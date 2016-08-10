@@ -322,7 +322,8 @@ public class CheckoutController {
 		return "order_confirmation";
 	}
 
-
+	// Bug fix #4: Update the order confirmation email template to remove
+	// the billing address and all payment info.
 	@RequestMapping(value = "/email", method = RequestMethod.GET)
 	public void getFile(HttpServletResponse response) {
 		// simulating an email receipt
@@ -347,9 +348,8 @@ public class CheckoutController {
 	    		
 	    		ctx.setVariable("orderNumber", purchase.getOrderNumber());
 	    		ctx.setVariable("shippingAddress", purchase.getShippingAddress());
-	    		ctx.setVariable("billingAddress", purchase.getBillingAddress());
-	    		ctx.setVariable("creditCard", purchase.getCreditCardNumber());
-	    		
+                // removed billing address and credit cart
+
 	    		final String htmlContent = this.templateEngine.process("email_confirmation", ctx);
 			
 		    	response.setHeader("Content-Disposition", "attachment; filename=email_receipt.html");
