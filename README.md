@@ -211,8 +211,37 @@ Under construction...
     Description can be found in each test
 <hr>
 2. <a id="task-2"></a>
+    Bug fix: Ensure that enough products are in stock before 
+    adding to the shopping cart. Whether adding products to the cart 
+    from product detail pages or updating an product’s quantity from 
+    the cart view, more products than are in stock can be added to the 
+    cart. Fix this issue and add a unit test to cover this scenario.
+    <hr>
+    In order to fix the bug in [CartController] I modified 
+    `addToCart` and `updateCart` methods:
+    - in `addToCart` method I check quantity two times:
+        1. When the user asks the quantity already more than
+            we have in stock: e.g. in stock: 5, in cart 0,
+            user asks 6.
+            Test that checks this in [CartControllerTest] is called :
+            `addToCartPostRequestWithQuantityMoreThanInDbFails` 
+        2. When the user has some items in cart, and then he
+            adds some more so that total amount is more than
+            in stock: e.g. in stock: 5, user had 5 in cart,
+            clicked add one more. Test that checks this in
+            [CartControllerTest] is:
+            `addToCartPostRequestWithQuantityPlusCartQuantityMoreThanInDbFails`
+    
+    When this "overflow" error happens, I redirect user back
+    to products page, add Flash message on top, and also
+    set logger error.
+    - in `updateCart` I check only once: because there cannot
+        be two scenarios like in `addToCart`. Test in 
+        [CartControllerTest] is called:
+        `updatingCartWithQuantityMoreThanInDbFails`
 
-
+3. <a id="task-3"></a>
+<hr>
 
 
 
