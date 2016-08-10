@@ -37,7 +37,11 @@
                     </div>
                     <div class="summary-info">
                         <h3>Billing Info:</h3>
-                        <span th:text="|Credit Card ${creditCard}|">Credit Card XXXX</span>
+                        <!--/* Bug fix #3: credit card number given to the
+                               model will conceal all but 4 last digits
+                               of credit card number
+                         */-->
+                        <span th:text="|Credit Card ${creditCard}|">Credit Card XXXX1234</span>
                     </div>
                 </div>
                 <div class="mini-cart">
