@@ -5,6 +5,7 @@ import com.acme.ecommerce.domain.*;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -375,6 +376,21 @@ public class CheckoutControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.get("/checkout/email")).andDo(print()).andExpect(status().isOk());
 	}
 
+	// test to check whether credit card is hidden
+	@Test
+	public void creditCardNumberShouldBeSuccessfullyHiddenByIntroducedMethod()
+			throws Exception {
+		// When valid credit card number is passed to
+		// makeCreditCardNumberHidden method
+		String creditCardNumber = "1234123412341234";
+		// Then expected hidden credit card number should be returned
+		String hiddenCreditCardNumber =
+				checkoutController.makeCreditCardNumberHidden(creditCardNumber);
+		Assert.assertEquals(
+				"************1234",
+				hiddenCreditCardNumber);
+	}
+
 	private Product productBuilder() {
 		Product product = new Product();
 		product.setId(1L);
@@ -403,4 +419,5 @@ public class CheckoutControllerTest {
         purchase.setCreditCardNumber("1234123412341234");
 		return purchase;
 	}
+
 }
