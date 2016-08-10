@@ -185,8 +185,30 @@ Under construction...
     A unit test should also be added to verify that the added 
     validation is working.
     <hr>
-    1. First of all I added `@NotEmpty` annotation and `@Size` 
-        annotations to [CouponCode][CouponCode#L1] `code` field.
+    1. I added `@NotEmpty` annotation and `@Size`
+        annotations to [CouponCode] `code` field, with appropriate
+        messages, that will be displayed in case of error.
+    2. [CheckoutController] method `postCouponCode` was changed
+        so that coupon code is checked:
+        - `@Valid` annotation was added to attribute "code"
+        - `BindingResult` was added, to see errors
+        - `RedirectAttributes` were added, to send with
+            redirect wrong user's code and error in
+            `BindingResult`, changed accordingly to account 
+            for errors on coupon's code field
+    3. I also changed code in `checkoutCoupon` coupon method
+        to account for wrong user code, to be saved upon 
+        unsuccessful POST request
+    4. Thymeleaf template was changed accordingly, so that
+        `<input>` tag is surrounded by `<div>` changing
+        its class when types wrong code.
+    5. Following unit tests were added to test functionality:
+        - `postCouponTest`
+        - `postingWrongCouponRedirectsBackToStepOnePage`
+        - `postingCouponWithNoRequestParamsRedirectsBackToStepOnePage`
+        - `postingEmptyCouponRedirectsBackToStepOnePage`
+
+    Description can be found in each test
 <hr>
 2. <a id="task-2"></a>
 
