@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <!--/* repeatable head from layout: argument is title of the page */-->
     <head th:replace="layout :: head('Cart')"></head>
     <body>
+	<!--/* repeatable header from layout: argument is title of the header */-->
     <header th:replace="layout :: header('Cart')"></header>
+        <!--/* Flash message displayed on success or failure, see layout */-->
+        <div th:replace="layout :: flash"></div>
         <section class="cart">
             <h1>Your Cart</h1>
             <div th:if="${purchase != null and not #lists.isEmpty(purchase.productPurchases)}">
@@ -16,7 +20,15 @@
 		                    <a class="button-link" href="javascript:;" onclick="parentNode.submit();">Remove Item</a>
 		                </form>
 		            </div>
-		            <form class="cart-quantity" th:id="@{/cartQuantity{productId}(productId=${productPurchase.product.id})}" action="#" th:action="@{/cart/update}" method="post">
+					<!--/* form of updating number of items in cart: should
+					       redirect back if number of items asked is more than
+					       in stock. Bug #2
+					*/-->
+		            <form class="cart-quantity"
+						  th:id="@{/cartQuantity{productId}(productId=${productPurchase.product.id})}"
+						  action="#"
+						  th:action="@{/cart/update}"
+						  method="post">
 	                    <input type="text" class="quantity" name="newQuantity" th:value="${productPurchase.quantity}"/>
 	                    <input type="hidden" name="productId" th:value="${productPurchase.product.id}"/>
 	                    <a class="button-link" href="javascript:;" onclick="parentNode.submit();">Update</a>
