@@ -34,13 +34,13 @@
     but the last 4 digits of the credit card number.
     <hr>
 * [4.] (#task-4) 
-    <hr>
-    Bug fix: Update the order confirmation email template to remove the 
+    Bug fix: Update the order confirmation email template to remove the
     billing address and all payment info. Note that the email feature 
     is not fully implemented since it would require an SMTP server, 
     so this is implemented instead as a file download on the confirmation 
     page. The HTML of this file would be sent as the content of the 
     confirmation email in a fully implemented version.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
