@@ -386,7 +386,10 @@ public class CheckoutControllerTest {
 		product.setThumbImageName("imagename");
 		return product;
 	}
-	
+
+	// Bug fix #3 change: added set of credit card number because,
+	// we need it to be non-null, because of the method converting number
+	// to hidden in controller
 	private Purchase purchaseBuilder(Product product) {
 		ProductPurchase pp = new ProductPurchase();
 		pp.setProductPurchaseId(1L);
@@ -394,10 +397,10 @@ public class CheckoutControllerTest {
 		pp.setProduct(product);
 		List<ProductPurchase> ppList = new ArrayList<ProductPurchase>();
 		ppList.add(pp);
-
 		Purchase purchase = new Purchase();
 		purchase.setId(1L);
 		purchase.setProductPurchases(ppList);
+        purchase.setCreditCardNumber("1234123412341234");
 		return purchase;
 	}
 }
