@@ -162,7 +162,10 @@ public class CartController {
     }
  
     @RequestMapping(path="/update", method = RequestMethod.POST)
-    public RedirectView updateCart(@ModelAttribute(value="productId") long productId, @ModelAttribute(value="newQuantity") int newQuantity) {
+    public RedirectView updateCart(
+    		@ModelAttribute(value="productId") long productId,
+			@ModelAttribute(value="newQuantity") int newQuantity,
+			RedirectAttributes redirectAttributes) {
     	logger.debug("Updating Product: " + productId + " with Quantity: " + newQuantity);
 		RedirectView redirect = new RedirectView("/cart");
 		redirect.setExposeModelAttributes(false);
@@ -170,6 +173,26 @@ public class CartController {
     	Product updateProduct = productService.findById(productId);
     	if (updateProduct != null) {
     		Purchase purchase = sCart.getPurchase();
+            // Before we get into cycle of purchase, lets check whether
+            // quantity
+            // specified is less than we have in database
+            // here we set number of products available
+            Integer numberOfProductsInDatabase =
+                    updateProduct.getQuantity();
+            if (newQuantity > numberOfProductsInDatabase) {
+                // print error in logger
+                logger.error("There are not enough products left");
+                // set redirect url back to products page
+                redirect.setUrl("/cart");
+                // add flash message with failure on top of the page
+                redirectAttributes.addFlashAttribute("flash",
+                        new FlashMessage(
+                                "Sorry! No more products " +
+                                        "of this type is left",
+                                FlashMessage.Status.FAILURE
+                        ));
+                return redirect;
+            }
     		if (purchase == null) {
     			logger.error("Unable to find shopping cart for update");
     			redirect.setUrl("/error");
