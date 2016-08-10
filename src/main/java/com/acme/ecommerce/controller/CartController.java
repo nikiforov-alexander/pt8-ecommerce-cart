@@ -276,11 +276,4 @@ public class CartController {
     	return redirect;
     }
 
-	@ExceptionHandler(NotFoundException.class)
-	public String exceptionHandler(Model model, Exception exception) {
-		model.addAttribute("errorMessage", exception.getMessage());
-	    return "/error";
-	}
-
-
 }
