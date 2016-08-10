@@ -45,7 +45,7 @@
 <!--Links-->
 <!-- settings files -->
 [eCommerce.properties]:
-    ./properties/ecommerce.properties ./properties/ecommerce.properties 
+    ./properties/eCommerce.properties ./properties/eCommerce.properties
 [application.properties]:
     src/main/resources/application.properties "Spring application properties file: application.properties"
 [build.gradle]:
@@ -178,3 +178,114 @@ Under construction...
 
 ### Tasks
 1. <a id="task-1"></a>
+
+
+
+
+
+
+
+
+
+<a id="links"></a>
+### Quick Links
+<!--Links-->
+
+#### Settings files 
+- [eCommerce.properties]
+- [application.properties]
+- [build.gradle]
+
+
+#### Directories
+- [resources]
+- [templates]
+- [static]
+- [css]
+- [initial_project_files]
+
+
+#### Static and resources files
+- [site.js]
+- [favicon.ico]
+
+
+#### CSS files
+- [normalize.css]
+- [site.css]
+
+
+#### Thymeleaf Templates 
+- [layout.html]
+- [checkout_3.html]
+- [error.html]
+- [email_confirmation.html]
+- [about.html]
+- [checkout_1.html]
+- [order_confirmation.html]
+- [index.html]
+- [welcome.html]
+- [product_detail.html]
+- [checkout_2.html]
+- [cart.html]
+
+
+#### Java files 
+
+##### Unit testing files
+- [TestPurchaseIT]
+- [TestProductControllerIT]
+- [ProductControllerTest]
+- [CheckoutControllerTest]
+- [CartControllerTest]
+- [IndexRedirectControllerTest]
+- [TestProductIT]
+- [TestAddressIT]
+
+
+##### Services and implementations
+- [ProductService]
+- [PurchaseService]
+- [PurchaseServiceImpl]
+- [ProductServiceImpl]
+
+
+##### Main Application file
+- [Application]
+
+
+##### Configuration files
+- [PersistenceConfig]
+- [ApplicationConfig]
+
+
+##### Repositories
+- [PurchaseRepository]
+- [AddressRepository]
+- [ProductPurchaseRepository]
+- [ProductRepository]
+
+
+##### Helpful web classes
+- [FlashMessage]
+- [NotFoundException]
+- [WebConstants]
+
+
+##### Model or Domain classes
+- [CombinedBilling]
+- [Purchase]
+- [Address]
+- [ProductPurchase]
+- [Product]
+- [ShoppingCart]
+- [CouponCode]
+
+
+##### Controllers
+- [IndexRedirectController]
+- [CheckoutController]
+- [ProductController]
+- [CartController]
+
+
