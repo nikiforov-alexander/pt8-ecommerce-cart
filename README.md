@@ -268,9 +268,10 @@ Under construction...
     page. The HTML of this file would be sent as the content of the
     confirmation email in a fully implemented version.
     <hr>
-    For now I just removed from [CheckoutController] billing
+    For now I just removed from [CheckoutController] method
+    generating e-mail `getFile` billing
     address and credit card number. I did the same in thymeleaf
-    template [order_confirmation.html]. E-mail feature is 
+    template [email_confirmation.html]. E-mail feature is 
     supposed to be working like this I guess - at confirmation
     page automatically user is asked where to download file.
     Automatic feature does not work for me. I'll try to dig 
