@@ -261,6 +261,22 @@ Under construction...
     `creditCardNumberShouldBeSuccessfullyHiddenByIntroducedMethod`
 <hr>
 4. <a id="task-4"></a>
+    Bug fix: Update the order confirmation email template to remove the
+    billing address and all payment info. Note that the email feature
+    is not fully implemented since it would require an SMTP server,
+    so this is implemented instead as a file download on the confirmation
+    page. The HTML of this file would be sent as the content of the
+    confirmation email in a fully implemented version.
+    <hr>
+    For now I just removed from [CheckoutController] billing
+    address and credit card number. I did the same in thymeleaf
+    template [order_confirmation.html]. E-mail feature is 
+    supposed to be working like this I guess - at confirmation
+    page automatically user is asked where to download file.
+    Automatic feature does not work for me. I'll try to dig 
+    into this later
+<hr>
+5. <a id="task-5"></a>
 
 
 
