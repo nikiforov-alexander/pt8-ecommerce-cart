@@ -74,7 +74,7 @@ public class CheckoutController {
 		return "checkout_1";
 	}
 
-    // Bug fix: Add form validation to the coupon code field in the first
+    // Bug fix #1: Add form validation to the coupon code field in the first
     // step of the checkout process.
     // A coupon code will be considered valid if
     // it contains between 5 and 10 characters.
