@@ -168,7 +168,9 @@ public class CartController {
 
     	return redirect;
     }
- 
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful update
     @RequestMapping(path="/update", method = RequestMethod.POST)
     public RedirectView updateCart(
     		@ModelAttribute(value="productId") long productId,
@@ -221,6 +223,14 @@ public class CartController {
     			}
     		}
     		sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when product quantity is updated
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"Product quantity is updated to '"
+									+ newQuantity +
+									"' items ",
+							FlashMessage.Status.SUCCESS
+					));
     	} else {
     		logger.error("Attempt to update on non-existent product");
     		redirect.setUrl("/error");
