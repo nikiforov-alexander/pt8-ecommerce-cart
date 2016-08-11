@@ -240,6 +240,7 @@ strong {
     background-color: lightcoral;
 	color: aliceblue;
 	position: relative;
+	font-weight: bold;
 }
 /* <p> inside: text message styling */
 .pagination.flash.failure p {
