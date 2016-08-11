@@ -238,9 +238,13 @@ public class CartController {
     	
     	return redirect;
     }
-    
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful remove
     @RequestMapping(path="/remove", method = RequestMethod.POST)
-    public RedirectView removeFromCart(@ModelAttribute(value="productId") long productId) {
+    public RedirectView removeFromCart(
+    		@ModelAttribute(value="productId") long productId,
+			RedirectAttributes redirectAttributes) {
     	logger.debug("Removing Product: " + productId);
 		RedirectView redirect = new RedirectView("/cart");
 		redirect.setExposeModelAttributes(false);
@@ -260,6 +264,13 @@ public class CartController {
     			}
     			purchase = purchaseService.save(purchase);
     			sCart.setPurchase(purchase);
+				// add successful flash message when product is deleted
+				redirectAttributes.addFlashAttribute("flash",
+						new FlashMessage(
+								"'" + updateProduct.getName() +
+										"' is successfully removed from cart!",
+								FlashMessage.Status.SUCCESS
+						));
     			if (purchase.getProductPurchases().isEmpty()) {
         	    	//if last item in cart redirect to product else return cart
         			redirect.setUrl("/product/");
