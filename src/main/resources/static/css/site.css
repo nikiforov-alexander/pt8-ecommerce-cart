@@ -382,6 +382,17 @@ strong {
 	color: #363a31;
 	font-weight: 700;
 }
+/* that is the subtotal value in the header, shown when subtotal is not null */
+header .subtotal strong span {
+	color: aliceblue;
+	font-weight: 700;
+}
+/* That is changed nav element with subtotal: moved up a bit: just for beauty*/
+nav.with-subtotal {
+	position: relative;
+	bottom: 53px;
+	padding: 0;
+}
 .checkout-footer {
 	padding: 35px 0 15px 0;
 	display: block;

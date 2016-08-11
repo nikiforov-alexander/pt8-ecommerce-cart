@@ -41,6 +41,15 @@
     page. The HTML of this file would be sent as the content of the 
     confirmation email in a fully implemented version.
     <hr>
+* [5.] (#task-5) 
+    Enhancement:
+    Add the cart subtotal to the page header, 
+    as part of the “View Cart” link.
+    The subtotal should display only if the cart is not empty, 
+    and the number should be formatted with a dollar sign, 
+    as well as a comma for the thousands separator. 
+    Add a unit test to verify that the rendered view contains the subtotal.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -278,7 +287,36 @@ Under construction...
     into this later
 <hr>
 5. <a id="task-5"></a>
-
+    Enhancement:
+    Add the cart subtotal to the page header, 
+    as part of the “View Cart” link.
+    The subtotal should display only if the cart is not empty, 
+    and the number should be formatted with a dollar sign, 
+    as well as a comma for the thousands separator. 
+    Add a unit test to verify that the rendered view contains the subtotal.
+    <hr>
+    I added 'div' with subtotal just like in 
+    [checkout_1.html] template to the [layout.html] file
+    in a way that if subtotal value is not null, it will
+    be displayed in "header". I also changed styling
+    of "nav" element in header that changes when
+    `subtotal` is not null. Added couple of CSS 
+    classes accordingly. NOTE: there was no problems
+    with format, because I took already working 
+    code from usual `subtotal` on checkout pages.
+    <hr>
+    In terms of code, there was nothing to be changed
+    in controllers or elsewhere except testing classes.
+    <br>
+    In order to test that I needed to change integration
+    test `ProductDetailAddItemIntegrationTest` in 
+    [TestProductControllerIT]. There I test my `subtotal`
+    in "header" just like usual `subtotal` in body:
+    - get element by id
+    - assert that this element is equal to subtotal
+        in body
+<hr>
+6. <a id="task-6"></a>
 
 
 

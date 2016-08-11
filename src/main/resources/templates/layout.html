@@ -39,7 +39,25 @@
 			   th:href="@{/product/}">
 				CartShop : Page Title
 			</a>
-	        <nav>
+            <!--/*
+            	Task #5 - Add subtotal on page header, when it is not null
+            	the representation is copied from already defined style. So
+            	no changes here.
+            */-->
+            <div th:if="${subTotal != null}"
+				 class="subtotal">
+                Subtotal:
+				<strong>
+                    <span id="subtotal-in-header"
+                          th:text="${'$' + #numbers.formatDecimal(subTotal, 1, 2, 'POINT')}">
+                        $199.00
+                    </span>
+				</strong>
+            </div>
+			<!--/* nav element changes its class when subtotal is not 0
+			       moved up a little just for beauty
+			*/-->
+	        <nav th:classappend="${subTotal != null}? 'with-subtotal' : ''">
 	            <ul>
 					<!--/* Link to about page */-->
 	                <li>
@@ -50,7 +68,8 @@
 						<a href="#">FAQ</a>
 					</li>
 					<!--/* Link to cart */-->
-	                <li><a class="button icon-right"
+	                <li><a name="cartButton"
+						   class="button icon-right"
 						   th:href="@{/cart}">
 							View Cart
 							<i class="material-icons">shopping_cart</i>
