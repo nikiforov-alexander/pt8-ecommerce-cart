@@ -91,16 +91,41 @@ public class CartControllerTest {
 				.andExpect(redirectedUrl("/error"));
 	}
 
+	// Task #5: Enhancement
+	// In this successful test we added check that flash message with
+	// was indeed sent with redirect attributes
 	@Test
 	public void addToCartTest() throws Exception {
+		// Arrange Mock Behaviour
+		// make product
 		Product product = productBuilder();
-
+		// when product service.findById will be called in controller,
+		// we return product arranged above
 		when(productService.findById(1L)).thenReturn(product);
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/cart/add").param("quantity", "1").param("productId", "1"))
+		// Act and Assert:
+		// When POST request to add new item to card is made with
+		// valid parameters, Then:
+		// - status should be of 3xx - redirect
+		// - redirected URL should be "/product"
+		// - flash message has to be found in flash attributes
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/add")
+						.param("quantity", "1")
+						.param("productId", "1"))
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/product/"));
+				.andExpect(redirectedUrl("/product/"))
+				.andExpect(
+						flash().attribute(
+							"flash",
+							Matchers.hasProperty(
+								"status",
+								Matchers.equalTo(FlashMessage.Status.SUCCESS)
+							)
+						)
+				);
 	}
 	// Bug fix: Ensure that enough products are in stock before adding to
     // the shopping cart.
