@@ -247,6 +247,19 @@ strong {
     position: relative;
     top: 13px;
 }
+/* successful flash messages on top of the page styling div*/
+.pagination.flash.success {
+	background-color: lightseagreen;
+	color: aliceblue;
+	position: relative;
+	font-weight: bold;
+}
+/* <p> inside: text message styling */
+.pagination.flash.success p {
+	margin: 0px;
+	position: relative;
+	top: 13px;
+}
 
 
 /* --- Single Item Product Styles --- */
