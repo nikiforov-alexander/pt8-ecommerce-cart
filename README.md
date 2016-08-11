@@ -50,6 +50,15 @@
     as well as a comma for the thousands separator. 
     Add a unit test to verify that the rendered view contains the subtotal.
     <hr>
+* [6.] (#task-6)
+    Enhancement:
+    Add flash messaging to the application for adding, updating,
+    and removing products from the cart,
+    and for emptying the cart.
+    Don’t forget the case for when a user tries to request a
+    product quantity that exceeds its amount in stock.
+    Include unit tests to verify that flash messages work correctly.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -317,6 +326,27 @@ Under construction...
         in body
 <hr>
 6. <a id="task-6"></a>
+    Enhancement:
+    Add flash messaging to the application for adding, updating,
+    and removing products from the cart,
+    and for emptying the cart.
+    Don’t forget the case for when a user tries to request a
+    product quantity that exceeds its amount in stock.
+    Include unit tests to verify that flash messages work correctly.
+    <hr>
+    1. add product to cart flash messaging:
+       <br>
+       Flash message is sent on successful addition of product to cart,
+       as well as on the unsuccessful: when there no products left in
+       stock. They are both implemented in [CartController] method.
+       Flash messaging itself is implemented with class [FlashMessage],
+       that has `message`, with user message and `enum status` with
+       two statuses: `FlashMessage.Status.FAILURE` and
+       `FlashMessage.Status.SUCCESS`. Exactly last ones are tested in
+       unit tests implemented in [CartControllerTest] classes:
+       See `addToCartTest` method there for positive addition and
+       [Task 1](#task-1) for failed addition to cart.
+
 
 
 
