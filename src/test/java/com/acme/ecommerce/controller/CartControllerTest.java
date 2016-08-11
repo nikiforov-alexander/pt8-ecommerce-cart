@@ -325,15 +325,21 @@ public class CartControllerTest {
 				.andExpect(redirectedUrl("/error"));
 	}
 
+	// Task #5: Enhancement
+	// In this successful delete test we added check that flash message with
+	// success status was indeed sent with redirect attributes
 	@Test
 	public void removeFromCartTest() throws Exception {
+	    // Arrange:
+		// create two products
 		Product product = productBuilder();
 
 		Product product2 = productBuilder();
 		product2.setId(2L);
-
+		// arrange product 1 be returned when product service is called
+		// in controller
 		when(productService.findById(1L)).thenReturn(product);
-
+		// create 2 product purchases
 		ProductPurchase pp = new ProductPurchase();
 		pp.setProductPurchaseId(1L);
 		pp.setQuantity(1);
@@ -343,22 +349,47 @@ public class CartControllerTest {
 		pp2.setProductPurchaseId(2L);
 		pp2.setQuantity(2);
 		pp2.setProduct(product2);
-
-		List<ProductPurchase> ppList = new ArrayList<ProductPurchase>();
+		// create list of product purchases
+		List<ProductPurchase> ppList = new ArrayList<>();
+		// and fill it with created purchases
 		ppList.add(pp);
 		ppList.add(pp2);
-
+		// create new Purchase
 		Purchase purchase = new Purchase();
 		purchase.setId(1L);
 		purchase.setProductPurchases(ppList);
-
+		// arrange cart to return purchase when getPurchase is called
 		when(sCart.getPurchase()).thenReturn(purchase);
-
+		// arrange purchase service save purchase return purchase
+		// when save is called
 		when(purchaseService.save(purchase)).thenReturn(purchase);
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/cart/remove").param("productId", "1")).andDo(print())
+		// Act and Assert:
+		// When POST request to remove product from cart is made with
+		// valid params
+		// Then:
+		// - status should be 3xx - redirect
+        // - redirected url should be "/cart"
+		// - successful flash message has to be sent with status success with
+		//   redirect attributes
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/remove")
+						.param("productId", "1"))
+				.andDo(print())
 				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/cart"));
+				.andExpect(redirectedUrl("/cart"))
+				.andExpect(
+						flash().attribute(
+								"flash",
+								Matchers.hasProperty(
+										"status",
+										Matchers.equalTo(
+												FlashMessage.Status.SUCCESS
+										)
+								)
+						)
+				);
 	}
 
 	@Test
