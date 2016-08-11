@@ -225,20 +225,45 @@ public class CartControllerTest {
 				.andExpect(redirectedUrl("/error"));
 	}
 
+	// Task #5: Enhancement
+	// In this successful update test we added check that flash message with
+	// was indeed sent with redirect attributes
 	@Test
 	public void updateCartTest() throws Exception {
+		// Arrange:
+		// Create test product
 		Product product = productBuilder();
-
+		// arrange service to return product above
 		when(productService.findById(1L)).thenReturn(product);
-
+		// create test purchase
 		Purchase purchase = purchaseBuilder(product);
-
+		// arrange cart to return purchase we simulated
 		when(sCart.getPurchase()).thenReturn(purchase);
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/cart/update").param("newQuantity", "2").param("productId", "1"))
+		// Act and Assert:
+		// When POST request to update quantity is made with valid
+		// parameters, Then:
+		// - status should be 3xx - redirection
+		// - redirected URL should be "/cart"
+		// - flash attribute should be with success status
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/update")
+						.param("newQuantity", "2")
+						.param("productId", "1"))
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/cart"));
+				.andExpect(redirectedUrl("/cart"))
+				.andExpect(
+						flash().attribute(
+							"flash",
+							Matchers.hasProperty(
+									"status",
+									Matchers.equalTo(
+											FlashMessage.Status.SUCCESS)
+							)
+						)
+				);
 	}
 
 	// Bug fix #2 - updating with quantity more than there are in db fails
