@@ -63,13 +63,16 @@ public class CartController {
         return "cart";
     }
 
-	// Bug fix: Ensure that enough products are in stock before adding
+	//   Bug fix #2:
+	//   Ensure that enough products are in stock before adding
 	//   to the shopping cart.
 	//   Whether adding products to the cart from product detail pages
 	// 	 or updating an product’s quantity from the cart view,
 	//   more products than are in stock can be added to the cart.
 	//   Fix this issue and add a unit test to cover this scenario.
 	//   This is exactly the place to fix stuff ?
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful add
     @RequestMapping(path="/add", method = RequestMethod.POST)
     public RedirectView addToCart(
     		@ModelAttribute(value="productId") long productId,
@@ -151,6 +154,13 @@ public class CartController {
     		}
     		logger.debug("Added " + quantity + " of " + addProduct.getName() + " to cart");
     		sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when product is added
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"'" + addProduct.getName() +
+							"' is successfully added to cart!",
+							FlashMessage.Status.SUCCESS
+					));
 		} else {
 			logger.error("Attempt to add unknown product: " + productId);
 			redirect.setUrl("/error");
