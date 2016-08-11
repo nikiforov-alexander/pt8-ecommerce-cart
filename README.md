@@ -338,14 +338,22 @@ Under construction...
        <br>
        Flash message is sent on successful addition of product to cart,
        as well as on the unsuccessful: when there no products left in
-       stock. They are both implemented in [CartController] method.
+       stock. They are both implemented in [CartController] method
+       `addToCart`.
        Flash messaging itself is implemented with class [FlashMessage],
        that has `message`, with user message and `enum status` with
        two statuses: `FlashMessage.Status.FAILURE` and
        `FlashMessage.Status.SUCCESS`. Exactly last ones are tested in
        unit tests implemented in [CartControllerTest] classes:
        See `addToCartTest` method there for positive addition and
-       [Task 1](#task-1) for failed addition to cart.
+       [Task 2](#task-2) for failed addition to cart.
+    2. Update number of items in cart:
+        <br>
+       Flash message is sent for both successful and unsuccessful update
+       of number of items in cart. They are both implemented in
+       [CartController] method `updateCart`. Success status of flash message
+       is checked in `updateCartTest`, just like all flash messages.
+       About failed update I've written in [Task 2](#task-2).
 
 
 
