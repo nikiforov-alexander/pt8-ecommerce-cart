@@ -337,15 +337,15 @@ Under construction...
     1. add product to cart flash messaging:
        <br>
        Flash message is sent on successful addition of product to cart,
-       as well as on the unsuccessful: when there no products left in
+       as well as on the unsuccessful: when there are no products left in
        stock. They are both implemented in [CartController] method
        `addToCart`.
        Flash messaging itself is implemented with class [FlashMessage],
-       that has `message`, with user message and `enum status` with
+       that has `String message`, with user message and `enum status` with
        two statuses: `FlashMessage.Status.FAILURE` and
        `FlashMessage.Status.SUCCESS`. Exactly last ones are tested in
        unit tests implemented in [CartControllerTest] classes:
-       See `addToCartTest` method there for positive addition and
+       See `addToCartTest` method for positive addition and
        [Task 2](#task-2) for failed addition to cart.
     2. Update number of items in cart:
         <br>
@@ -358,8 +358,9 @@ Under construction...
         <br>
        Flash message is sent upon sucessful delete product from cart. It is
        implemented in [CartController] method `removeFromCart` and tested in
-       [CartControllerTest] method `removeFromCartTest`. I didn't test both
-       unsuccessful removal redirecting to "/error" page, because
+       [CartControllerTest] method `removeFromCartTest`. I didn't include
+        flash messaging for
+        unsuccessful removal redirecting to "/error" page, because
        `@ExceptionHandler` is not set-up, and if set up it, unfortunately,
        I need
        to change a lot of tests, that check just redirect to error, and not
@@ -368,7 +369,7 @@ Under construction...
     4. Emptying cart:
        <br>
        Flash message is sent upon successful emptying of the cart. It is
-       implmented in [CartController] method `emptyCart` and tested
+       implemented in [CartController] method `emptyCart` and tested
        in [CartControllerTest] method `emptyCartTest`. Again just like before
        no flashes sent upon unsuccessful removal in case of null and etc,
        because of the reason above (see description about 'delete' above).
