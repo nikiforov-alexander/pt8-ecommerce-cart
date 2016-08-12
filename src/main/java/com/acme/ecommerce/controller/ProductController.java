@@ -2,6 +2,7 @@ package com.acme.ecommerce.controller;
 
 import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.domain.ProductPurchase;
+import com.acme.ecommerce.exception.NotFoundException;
 import com.acme.ecommerce.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -56,7 +58,15 @@ public class ProductController {
 
         return "index";
     }
-    
+
+	// Task #7:
+	// Enhancement:
+	// Detect when a product’s detail view is requested,
+	// but the id requested isn’t found in the database.
+	// The rendered view should display a message saying
+	// that the product wasn’t found.
+	// I throw an NotFoundException, handled in @ExceptionHandler
+	// exceptionHandler method at the bottom
     @RequestMapping(path = "/detail/{id}", method = RequestMethod.GET)
     public String productDetail(@PathVariable long id, Model model) {
     	logger.debug("Details for Product " + id);
@@ -70,7 +80,10 @@ public class ProductController {
     		model.addAttribute("productPurchase", productPurchase);
     	} else {
     		logger.error("Product " + id + " Not Found!");
-    		return "redirect:/error";
+			// new way of handling: NotFoundException
+			throw new NotFoundException("Product Not Found");
+            // old way of handling: simple redirect
+//    		return "redirect:/error";
     	}
 
         return "product_detail";
@@ -105,4 +118,12 @@ public class ProductController {
     	logger.warn("Happy Easter! Someone actually clicked on About.");
     	return("about");
     }
+
+    // Task #7: Here NotFoundException is handled, "error.html" is rendered
+	// and "exception" is added to model.
+    @ExceptionHandler(NotFoundException.class)
+	public String exceptionHandler(Model model, Exception exception){
+    	model.addAttribute("exception", exception);
+		return "/error";
+	}
 }
