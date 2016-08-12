@@ -50,6 +50,15 @@
     as well as a comma for the thousands separator. 
     Add a unit test to verify that the rendered view contains the subtotal.
     <hr>
+* [6.] (#task-6)
+    Enhancement:
+    Add flash messaging to the application for adding, updating,
+    and removing products from the cart,
+    and for emptying the cart.
+    Don’t forget the case for when a user tries to request a
+    product quantity that exceeds its amount in stock.
+    Include unit tests to verify that flash messages work correctly.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -317,6 +326,56 @@ Under construction...
         in body
 <hr>
 6. <a id="task-6"></a>
+    Enhancement:
+    Add flash messaging to the application for adding, updating,
+    and removing products from the cart,
+    and for emptying the cart.
+    Don’t forget the case for when a user tries to request a
+    product quantity that exceeds its amount in stock.
+    Include unit tests to verify that flash messages work correctly.
+    <hr>
+    1. add product to cart flash messaging:
+       <br>
+       Flash message is sent on successful addition of product to cart,
+       as well as on the unsuccessful: when there are no products left in
+       stock. They are both implemented in [CartController] method
+       `addToCart`.
+       Flash messaging itself is implemented with class [FlashMessage],
+       that has `String message`, with user message and `enum status` with
+       two statuses: `FlashMessage.Status.FAILURE` and
+       `FlashMessage.Status.SUCCESS`. Exactly last ones are tested in
+       unit tests implemented in [CartControllerTest] classes:
+       See `addToCartTest` method for positive addition and
+       [Task 2](#task-2) for failed addition to cart.
+    2. Update number of items in cart:
+        <br>
+       Flash message is sent for both successful and unsuccessful update
+       of number of items in cart. They are both implemented in
+       [CartController] method `updateCart`. Success status of flash message
+       is checked in `updateCartTest`, just like all flash messages.
+       About failed update I've written in [Task 2](#task-2).
+    3. Delete items from cart:
+        <br>
+       Flash message is sent upon sucessful delete product from cart. It is
+       implemented in [CartController] method `removeFromCart` and tested in
+       [CartControllerTest] method `removeFromCartTest`. I didn't include
+        flash messaging for
+        unsuccessful removal redirecting to "/error" page, because
+       `@ExceptionHandler` is not set-up, and if set up it, unfortunately,
+       I need
+       to change a lot of tests, that check just redirect to error, and not
+       the throwal of exception. This requires major refactoring of the
+       project, which I'm not ready to do at this point.
+    4. Emptying cart:
+       <br>
+       Flash message is sent upon successful emptying of the cart. It is
+       implemented in [CartController] method `emptyCart` and tested
+       in [CartControllerTest] method `emptyCartTest`. Again just like before
+       no flashes sent upon unsuccessful removal in case of null and etc,
+       because of the reason above (see description about 'delete' above).
+       <hr>
+7. <a id="task-7"></a>
+
 
 
 

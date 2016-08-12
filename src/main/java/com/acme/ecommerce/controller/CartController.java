@@ -63,13 +63,16 @@ public class CartController {
         return "cart";
     }
 
-	// Bug fix: Ensure that enough products are in stock before adding
+	//   Bug fix #2:
+	//   Ensure that enough products are in stock before adding
 	//   to the shopping cart.
 	//   Whether adding products to the cart from product detail pages
 	// 	 or updating an product’s quantity from the cart view,
 	//   more products than are in stock can be added to the cart.
 	//   Fix this issue and add a unit test to cover this scenario.
 	//   This is exactly the place to fix stuff ?
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful add
     @RequestMapping(path="/add", method = RequestMethod.POST)
     public RedirectView addToCart(
     		@ModelAttribute(value="productId") long productId,
@@ -151,6 +154,13 @@ public class CartController {
     		}
     		logger.debug("Added " + quantity + " of " + addProduct.getName() + " to cart");
     		sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when product is added
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"'" + addProduct.getName() +
+							"' is successfully added to cart!",
+							FlashMessage.Status.SUCCESS
+					));
 		} else {
 			logger.error("Attempt to add unknown product: " + productId);
 			redirect.setUrl("/error");
@@ -158,7 +168,9 @@ public class CartController {
 
     	return redirect;
     }
- 
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful update
     @RequestMapping(path="/update", method = RequestMethod.POST)
     public RedirectView updateCart(
     		@ModelAttribute(value="productId") long productId,
@@ -211,6 +223,14 @@ public class CartController {
     			}
     		}
     		sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when product quantity is updated
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"Product quantity is updated to '"
+									+ newQuantity +
+									"' items ",
+							FlashMessage.Status.SUCCESS
+					));
     	} else {
     		logger.error("Attempt to update on non-existent product");
     		redirect.setUrl("/error");
@@ -218,9 +238,13 @@ public class CartController {
     	
     	return redirect;
     }
-    
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful remove
     @RequestMapping(path="/remove", method = RequestMethod.POST)
-    public RedirectView removeFromCart(@ModelAttribute(value="productId") long productId) {
+    public RedirectView removeFromCart(
+    		@ModelAttribute(value="productId") long productId,
+			RedirectAttributes redirectAttributes) {
     	logger.debug("Removing Product: " + productId);
 		RedirectView redirect = new RedirectView("/cart");
 		redirect.setExposeModelAttributes(false);
@@ -240,6 +264,13 @@ public class CartController {
     			}
     			purchase = purchaseService.save(purchase);
     			sCart.setPurchase(purchase);
+				// add successful flash message when product is deleted
+				redirectAttributes.addFlashAttribute("flash",
+						new FlashMessage(
+								"'" + updateProduct.getName() +
+										"' is successfully removed from cart!",
+								FlashMessage.Status.SUCCESS
+						));
     			if (purchase.getProductPurchases().isEmpty()) {
         	    	//if last item in cart redirect to product else return cart
         			redirect.setUrl("/product/");
@@ -255,9 +286,11 @@ public class CartController {
 
     	return redirect;
     }
-    
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful emptying
     @RequestMapping(path="/empty", method = RequestMethod.POST)
-    public RedirectView emptyCart() {
+    public RedirectView emptyCart(RedirectAttributes redirectAttributes) {
     	RedirectView redirect = new RedirectView("/product/");
 		redirect.setExposeModelAttributes(false);
     	
@@ -266,6 +299,12 @@ public class CartController {
 		if (purchase != null) {
 			purchase.getProductPurchases().clear();
 			sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when cart is emptied
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"Your cart was successfully emptied!",
+							FlashMessage.Status.SUCCESS
+					));
 		} else {
 			logger.error("Unable to find shopping cart for update");
 			redirect.setUrl("/error");
