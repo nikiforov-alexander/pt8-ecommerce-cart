@@ -360,11 +360,20 @@ Under construction...
        implemented in [CartController] method `removeFromCart` and tested in
        [CartControllerTest] method `removeFromCartTest`. I didn't test both
        unsuccessful removal redirecting to "/error" page, because
-       `@ExceptionHandler` is not set-up, and if set up it, unfortunately, 
+       `@ExceptionHandler` is not set-up, and if set up it, unfortunately,
        I need
        to change a lot of tests, that check just redirect to error, and not
        the throwal of exception. This requires major refactoring of the
        project, which I'm not ready to do at this point.
+    4. Emptying cart:
+       <br>
+       Flash message is sent upon successful emptying of the cart. It is
+       implmented in [CartController] method `emptyCart` and tested
+       in [CartControllerTest] method `emptyCartTest`. Again just like before
+       no flashes sent upon unsuccessful removal in case of null and etc,
+       because of the reason above (see description about 'delete' above).
+       <hr>
+7. <a id="task-7"></a>
 
 
 
