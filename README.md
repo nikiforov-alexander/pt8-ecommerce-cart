@@ -65,6 +65,12 @@
     but the id requested isn’t found in the database.
     The rendered view should display a message saying
     that the product wasn’t found.
+* [8.] (#task-8)
+    Combine the common elements of Thymeleaf templates into a
+    single template as fragments,
+    and include those fragments in the individual templates,
+    so as to eliminate the duplication of markup.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -401,6 +407,16 @@ Under construction...
     - address is "/error"
 <hr>
 8. <a id="task-8"></a>
+    Combine the common elements of Thymeleaf templates into a
+    single template as fragments,
+    and include those fragments in the individual templates,
+    so as to eliminate the duplication of markup.
+    <hr>
+    I created file [layout.html] in which I put repeatable
+    "head", "header", "div" with flash fragments.
+    <hr>
+9. <a id="task-9"></a>
+
 
 
 
