@@ -354,6 +354,17 @@ Under construction...
        [CartController] method `updateCart`. Success status of flash message
        is checked in `updateCartTest`, just like all flash messages.
        About failed update I've written in [Task 2](#task-2).
+    3. Delete items from cart:
+        <br>
+       Flash message is sent upon sucessful delete product from cart. It is
+       implemented in [CartController] method `removeFromCart` and tested in
+       [CartControllerTest] method `removeFromCartTest`. I didn't test both
+       unsuccessful removal redirecting to "/error" page, because
+       `@ExceptionHandler` is not set-up, and if set up it, unfortunately, 
+       I need
+       to change a lot of tests, that check just redirect to error, and not
+       the throwal of exception. This requires major refactoring of the
+       project, which I'm not ready to do at this point.
 
 
 
