@@ -59,6 +59,12 @@
     product quantity that exceeds its amount in stock.
     Include unit tests to verify that flash messages work correctly.
     <hr>
+* [7.] (#task-7)
+    Enhancement:
+    Detect when a product’s detail view is requested,
+    but the id requested isn’t found in the database.
+    The rendered view should display a message saying
+    that the product wasn’t found.
 
 <!--Links-->
 <!-- settings files -->
@@ -375,7 +381,26 @@ Under construction...
        because of the reason above (see description about 'delete' above).
        <hr>
 7. <a id="task-7"></a>
-
+    Enhancement:
+    Detect when a product’s detail view is requested,
+    but the id requested isn’t found in the database.
+    The rendered view should display a message saying
+    that the product wasn’t found.
+    <hr>
+    I changed old code that was redirecting to "error" page in
+    [ProductController] in `productDetail` method. Now when product
+    is null, [NotFoundException] is thrown, and "@ExceptionHandler"
+    method `exceptionHandler` is taking care of this exception,
+    generating [error.html] template in which exception message is
+    printed if exception is not null.
+    <br>
+    Exactly this is tested in [ProductControllerTest] class in
+    `getProductDetailInvalidId` method:
+    - status OK
+    - model has attribute exception of type [NotFoundException]
+    - address is "/error"
+<hr>
+8. <a id="task-8"></a>
 
 
 
