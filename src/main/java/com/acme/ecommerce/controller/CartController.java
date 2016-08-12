@@ -286,9 +286,11 @@ public class CartController {
 
     	return redirect;
     }
-    
+
+	//   Task #6: Enhancement.
+	//   adding successful flash message in case of successful emptying
     @RequestMapping(path="/empty", method = RequestMethod.POST)
-    public RedirectView emptyCart() {
+    public RedirectView emptyCart(RedirectAttributes redirectAttributes) {
     	RedirectView redirect = new RedirectView("/product/");
 		redirect.setExposeModelAttributes(false);
     	
@@ -297,6 +299,12 @@ public class CartController {
 		if (purchase != null) {
 			purchase.getProductPurchases().clear();
 			sCart.setPurchase(purchaseService.save(purchase));
+			// add successful flash message when cart is emptied
+			redirectAttributes.addFlashAttribute("flash",
+					new FlashMessage(
+							"Your cart was successfully emptied!",
+							FlashMessage.Status.SUCCESS
+					));
 		} else {
 			logger.error("Unable to find shopping cart for update");
 			redirect.setUrl("/error");
