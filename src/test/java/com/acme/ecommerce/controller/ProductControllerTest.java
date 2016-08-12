@@ -2,7 +2,9 @@ package com.acme.ecommerce.controller;
 
 import com.acme.ecommerce.Application;
 import com.acme.ecommerce.domain.Product;
+import com.acme.ecommerce.exception.NotFoundException;
 import com.acme.ecommerce.service.ProductService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,10 +94,41 @@ public class ProductControllerTest {
 	
 	@Test
 	public void getProductDetailInvalidId() throws Exception {
+	    // Old way of handling error
+//		when(productService.findById(1L)).thenReturn(null);
+//		mockMvc.perform(MockMvcRequestBuilders.get("/product/detail/1"))
+//			.andExpect(status().is3xxRedirection())
+//		    .andExpect(redirectedUrl("/error"));
+
+		// My way of handling error
+
+		// Arrange:
+		// when product service will be called we return null, to throw
+		// exception
 		when(productService.findById(1L)).thenReturn(null);
-		mockMvc.perform(MockMvcRequestBuilders.get("/product/detail/1"))
-			.andExpect(status().is3xxRedirection())
-		    .andExpect(redirectedUrl("/error"));
+
+		// Act and Assert:
+		// When GET request is made to product detail with non-existing
+		// product
+		// Then:
+		// - status should be OK - because error page should be successfully
+		//     generated
+		// - view name has to be "/error"
+		// - model should have attribute exception of type
+		//     NotFoundException
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.get("/product/detail/1"))
+				.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("/error"))
+				.andExpect(
+						model().attribute(
+								"exception",
+								Matchers.instanceOf(NotFoundException.class)
+						)
+				);
+
 	}
 
 	@Test
