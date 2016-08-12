@@ -428,15 +428,21 @@ public class CartControllerTest {
 				.andExpect(redirectedUrl("/product/"));
 	}
 
+	// Task #5: Enhancement
+	// In this successful emptying test we added check that flash message with
+	// success status was indeed sent with redirect attributes
 	@Test
 	public void emptyCartTest() throws Exception {
+		// Arrange
+		// Create two products
 		Product product = productBuilder();
-
 		Product product2 = productBuilder();
 		product2.setId(2L);
-
+		// Arrange first product to be returned when product service is
+		// called
 		when(productService.findById(1L)).thenReturn(product);
 
+		// Arrange creating product purchases with above products
 		ProductPurchase pp = new ProductPurchase();
 		pp.setProductPurchaseId(1L);
 		pp.setQuantity(1);
@@ -446,22 +452,43 @@ public class CartControllerTest {
 		pp2.setProductPurchaseId(2L);
 		pp2.setQuantity(2);
 		pp2.setProduct(product2);
-
-		List<ProductPurchase> ppList = new ArrayList<ProductPurchase>();
+        // Arrange creating list of product purchases
+		List<ProductPurchase> ppList = new ArrayList<>();
 		ppList.add(pp);
 		ppList.add(pp2);
 
+		// Create new purchase with product purchases list
 		Purchase purchase = new Purchase();
 		purchase.setId(1L);
 		purchase.setProductPurchases(ppList);
-
+		// Arrange returning purchase when cart.getPurchase is called
 		when(sCart.getPurchase()).thenReturn(purchase);
-
+		// When save purchase will be called purchase will be returned
 		when(purchaseService.save(purchase)).thenReturn(purchase);
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/cart/empty")).andDo(print())
+		// When valid POST request to emptying cart is made
+		// Then:
+		// - status should be of 3xx redirect
+		// - redirected URL should be "/product"
+		// - flash message has to in flash attributes, with
+		//     success status
+		mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/cart/empty"))
+				.andDo(print())
 				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/product/"));
+				.andExpect(redirectedUrl("/product/"))
+                .andExpect(
+                		flash().attribute(
+                				"flash",
+								Matchers.hasProperty(
+										"status",
+										Matchers.equalTo(
+												FlashMessage.Status.SUCCESS
+										)
+								)
+						)
+				);
 	}
 
 	@Test
