@@ -5,11 +5,17 @@
 		<header th:replace="layout :: header('Error')"></header>
 	    <section class="cart">
             <h1>Error</h1>
-            <strong th:if="${errorMessage == null}">
+			<!--/* If there is no exception but simple redirect, we'll
+			       print this simple message
+			*/-->
+            <strong th:if="${exception == null}">
 				This is error page. How to get model attributes here: no idea.
 			</strong>
-			<strong th:if="${errorMessage != null}"
-					th:text="${errorMessage}">
+			<!--/* If there is exception, then we print here exception
+			       message. Usage: Task-6: product not found
+			*/-->
+			<strong th:if="${exception != null}"
+					th:text="${exception.message}">
 				This is error page. How to get model attributes here: no idea.
 			</strong>
 		</section>
