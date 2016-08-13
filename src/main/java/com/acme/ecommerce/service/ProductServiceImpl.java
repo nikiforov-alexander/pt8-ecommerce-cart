@@ -1,6 +1,7 @@
 package com.acme.ecommerce.service;
 
 import com.acme.ecommerce.domain.Product;
+import com.acme.ecommerce.exception.NotEnoughProductsException;
 import com.acme.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,31 @@ public class ProductServiceImpl implements ProductService {
 		Product result = repository.findOne(id);
 		
 		return result;
+	}
+
+	// This method is created to solve Task #9:
+    // Throw exceptions in the service layer for the case
+    // when an product’s requested quantity exceeds the quantity in stock,
+    // instead of checking the quantity in the controller.
+    // It looks simple. and I feel like I could put it into
+    // controller, but whatever: task is task. The one reason that I
+    // come up with is mocking made easy, I guess...
+    /**
+     *
+     * @param newQuantity
+     * @param numberOfProductsInStock
+     * @throws NotEnoughProductsException
+     *         if newQuantity > numberOfProductsInStock
+     *         otherwise does just nothing, used in
+     *         @see com.acme.ecommerce.controller.CartController
+     */
+	@Override
+	public void checkIfThereAreEnoughProductsInStock(
+			int newQuantity,
+			int numberOfProductsInStock) {
+        if (newQuantity > numberOfProductsInStock) {
+            throw new NotEnoughProductsException();
+        }
 	}
 
 }

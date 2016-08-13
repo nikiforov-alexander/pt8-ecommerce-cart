@@ -4,27 +4,36 @@ import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.domain.ProductPurchase;
 import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
+import com.acme.ecommerce.exception.NotEnoughProductsException;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
 import com.acme.ecommerce.web.FlashMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+
+import static com.acme.ecommerce.web.FlashMessage.Status.FAILURE;
 
 @Controller
 @RequestMapping("/cart")
 @Scope("request")
+@ComponentScan("com.teamtreehouse.service")
 public class CartController {
 	final Logger logger = LoggerFactory.getLogger(CartController.class);
 	
@@ -73,6 +82,12 @@ public class CartController {
 	//   This is exactly the place to fix stuff ?
 	//   Task #6: Enhancement.
 	//   adding successful flash message in case of successful add
+    //
+    // Task #9:
+    // Throw exceptions in the service layer for the case
+    // when an product’s requested quantity exceeds
+    // the quantity in stock,
+    // instead of checking the quantity in the controller.
     @RequestMapping(path="/add", method = RequestMethod.POST)
     public RedirectView addToCart(
     		@ModelAttribute(value="productId") long productId,
@@ -91,22 +106,10 @@ public class CartController {
 			// quantity
 			// specified is less than we have in database
 			// here we set number of products available
-			Integer numberOfProductsInDatabase =
-					addProduct.getQuantity();
-			if (quantity > numberOfProductsInDatabase) {
-			    // print error in logger
-				logger.error("There are not enough products left");
-				// set redirect url back to products page
-				redirect.setUrl("/product/");
-				// add flash message with failure on top of the page
-				redirectAttributes.addFlashAttribute("flash",
-						new FlashMessage(
-								"Sorry! No more products " +
-										"of this type is left",
-								FlashMessage.Status.FAILURE
-						));
-				return redirect;
-			}
+            productService.checkIfThereAreEnoughProductsInStock(
+                    quantity,
+                    addProduct.getQuantity()
+            );
 
     		Purchase purchase = sCart.getPurchase();
     		if (purchase == null) {
@@ -123,21 +126,10 @@ public class CartController {
 							// Example: 2 Items in database: 1 is quantity user
 							// 	 added, 2 items were already in his cart, 2+1>3
 							// 	 ->	 failure
-							if (pp.getQuantity() + quantity >
-									numberOfProductsInDatabase) {
-							    // print error to logger
-								logger.error("There are not enough products left");
-								// redirect to all products page
-                                redirect.setUrl("/product/");
-                                // add flash message displayed on top
-								redirectAttributes.addFlashAttribute("flash",
-										new FlashMessage(
-                                            "Sorry! No more products " +
-													"of this type is left",
-                                            FlashMessage.Status.FAILURE
-										));
-								return redirect;
-							}
+                            productService.checkIfThereAreEnoughProductsInStock(
+                                    pp.getQuantity() + quantity,
+                                    addProduct.getQuantity()
+                            );
 							pp.setQuantity(pp.getQuantity() + quantity);
 							productAlreadyInCart = true;
     						break;
@@ -186,23 +178,17 @@ public class CartController {
             // Before we get into cycle of purchase, lets check whether
             // quantity
             // specified is less than we have in database
-            // here we set number of products available
-            Integer numberOfProductsInDatabase =
-                    updateProduct.getQuantity();
-            if (newQuantity > numberOfProductsInDatabase) {
-                // print error in logger
-                logger.error("There are not enough products left");
-                // set redirect url back to products page
-                redirect.setUrl("/cart");
-                // add flash message with failure on top of the page
-                redirectAttributes.addFlashAttribute("flash",
-                        new FlashMessage(
-                                "Sorry! No more products " +
-                                        "of this type is left",
-                                FlashMessage.Status.FAILURE
-                        ));
-                return redirect;
-            }
+			// the method is very simple, but task is task:
+            // we check if there are enough products on service layer
+            // Task #9:
+            // Throw exceptions in the service layer for the case
+            // when an product’s requested quantity exceeds
+            // the quantity in stock,
+            // instead of checking the quantity in the controller.
+            productService.checkIfThereAreEnoughProductsInStock(
+                    newQuantity,
+                    updateProduct.getQuantity()
+            );
     		if (purchase == null) {
     			logger.error("Unable to find shopping cart for update");
     			redirect.setUrl("/error");
@@ -311,6 +297,30 @@ public class CartController {
 		}
 		
     	return redirect;
+    }
+
+    // Exception handler for not enough products
+    // this code is taken from spring unit test weather app.
+    // I will dig later to figure out how to use
+    // ReferrerInterceptor class. For now I specify manually
+    // redirect to httpServletRequest.getHeader("referer")
+    // which is page from which POST request was made
+    @ExceptionHandler(NotEnoughProductsException.class)
+    public String notEnoughProductsRedirect(
+            Exception exception,
+            HttpServletRequest httpServletRequest) {
+        // this part is not so understandable to me, why do we have to use
+        // flash map. Anyway in order to see flash message on the page
+        // where request was made, we put flash message to "flash" attribute
+        // of this flash map
+        FlashMap flashMap =
+                RequestContextUtils.getOutputFlashMap(httpServletRequest);
+        if(flashMap != null) {
+            flashMap.put("flash",
+                    new FlashMessage(exception.getMessage(), FAILURE));
+        }
+        // here we redirect to page from where request was made
+        return "redirect:" + httpServletRequest.getHeader("referer");
     }
 
 }

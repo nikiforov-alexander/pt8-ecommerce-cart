@@ -5,6 +5,7 @@ import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.domain.ProductPurchase;
 import com.acme.ecommerce.domain.Purchase;
 import com.acme.ecommerce.domain.ShoppingCart;
+import com.acme.ecommerce.exception.NotEnoughProductsException;
 import com.acme.ecommerce.service.ProductService;
 import com.acme.ecommerce.service.PurchaseService;
 import com.acme.ecommerce.web.FlashMessage;
@@ -28,7 +29,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.matches;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -136,6 +139,10 @@ public class CartControllerTest {
 
     // This test checks up if POST request adding more items that we
     // have in db of this type was done
+    // Task #9: test
+    // Throw exceptions in the service layer for the case when
+    // an product’s requested quantity exceeds the quantity in stock,
+    // instead of checking the quantity in the controller.
 	@Test
 	public void addToCartPostRequestWithQuantityMoreThanInDbFails()
             throws Exception {
@@ -144,9 +151,19 @@ public class CartControllerTest {
         // Arrange product return by service: when service will be called
         // in controller: 1-st product will be returned
 		when(productService.findById(1L)).thenReturn(product);
+        // Arrange productService to throw an exception when
+        // checkIfThereAreEnoughProductsInStock method is called
+        doThrow(new NotEnoughProductsException())
+                .when(productService)
+                        .checkIfThereAreEnoughProductsInStock(
+                                anyInt(), anyInt()
+                        );
 
-        // When POST request to add new product to cart ("/cart/add") is
-        // made, with 10 products, and product id = 1
+        // When:
+        //   POST request to add new product to cart ("/cart/add") is
+        //   made, with 10 products, and product id = 1, and
+        //   "referer" header is "/product/": page from which POST
+        //   request was made
         // Then:
         // - status is 3xx - redirection
         // - url of redirected page is "/product"
@@ -155,7 +172,9 @@ public class CartControllerTest {
 		        MockMvcRequestBuilders
                         .post("/cart/add")
                         .param("quantity", "10")
-                        .param("productId", "1"))
+                        .param("productId", "1")
+                        .header("referer", "/product/")
+                )
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/product/"))
@@ -191,9 +210,20 @@ public class CartControllerTest {
         // Arrange returning this purchase when it will be called in controller
         when(sCart.getPurchase()).thenReturn(purchase);
 
-        // When POST request to add new product to cart ("/cart/add")
-        // with quantity equal to number of products in database is
-        // made, and one last product will overfill cart
+        // Arrange productService to throw an exception when
+        // checkIfThereAreEnoughProductsInStock method is called
+        doThrow(new NotEnoughProductsException())
+                .when(productService)
+                .checkIfThereAreEnoughProductsInStock(
+                        anyInt(), anyInt()
+                );
+
+        // When:
+        //   POST request to add new product to cart ("/cart/add")
+        //   with quantity equal to number of products in database is
+        //   made, and one last product will overfill cart, and
+        //   header "referer" is "/product/" - page from which POST
+        //   request was made.
         // Then:
         // - status is 3xx - redirection
         // - url of redirected page is "/product"
@@ -202,7 +232,9 @@ public class CartControllerTest {
                 MockMvcRequestBuilders
                         .post("/cart/add")
                         .param("quantity", "1")
-                        .param("productId", "1"))
+                        .param("productId", "1")
+                        .header("referer", "/product/")
+                )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/"))
@@ -267,6 +299,10 @@ public class CartControllerTest {
 	}
 
 	// Bug fix #2 - updating with quantity more than there are in db fails
+    // Task #9 -
+    // Throw exceptions in the service layer for the case when an product’s
+    // requested quantity exceeds the quantity in stock,
+    // instead of checking the quantity in the controller.
 	@Test
 	public void updatingCartWithQuantityMoreThanInDbFails()
 			throws Exception {
@@ -277,10 +313,19 @@ public class CartControllerTest {
 		Purchase purchase = purchaseBuilder(product);
 		when(sCart.getPurchase()).thenReturn(purchase);
 
+		// throw exception when checkIfThereAreEnoughProductsInStock
+        // is called on service in controller
+		doThrow(new NotEnoughProductsException())
+				.when(productService)
+                .checkIfThereAreEnoughProductsInStock(
+                    anyInt(), anyInt()
+				);
 		// Act, and Assert:
 		// When :
 		// 	 POST request is made to update cart, with new quantity
-		// 	 more than quantity of items in db,
+		// 	 more than quantity of items in db, and "referer" header
+        //   is "/cart", providing that POST request was made from
+        //   "/cart"
 		// Then:
 		//   - status should be of 3xx - redirection
 		//   - redirected URL should be back to cart
@@ -290,7 +335,9 @@ public class CartControllerTest {
 				MockMvcRequestBuilders
 						.post("/cart/update")
 						.param("newQuantity", "10")
-						.param("productId", "1"))
+						.param("productId", "1")
+						.header("referer", "/cart")
+				)
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/cart"))
