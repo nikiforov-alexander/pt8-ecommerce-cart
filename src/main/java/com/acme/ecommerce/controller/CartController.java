@@ -82,6 +82,12 @@ public class CartController {
 	//   This is exactly the place to fix stuff ?
 	//   Task #6: Enhancement.
 	//   adding successful flash message in case of successful add
+    //
+    // Task #9:
+    // Throw exceptions in the service layer for the case
+    // when an product’s requested quantity exceeds
+    // the quantity in stock,
+    // instead of checking the quantity in the controller.
     @RequestMapping(path="/add", method = RequestMethod.POST)
     public RedirectView addToCart(
     		@ModelAttribute(value="productId") long productId,
@@ -100,22 +106,10 @@ public class CartController {
 			// quantity
 			// specified is less than we have in database
 			// here we set number of products available
-			Integer numberOfProductsInDatabase =
-					addProduct.getQuantity();
-			if (quantity > numberOfProductsInDatabase) {
-			    // print error in logger
-				logger.error("There are not enough products left");
-				// set redirect url back to products page
-				redirect.setUrl("/product/");
-				// add flash message with failure on top of the page
-				redirectAttributes.addFlashAttribute("flash",
-						new FlashMessage(
-								"Sorry! No more products " +
-										"of this type is left",
-								FAILURE
-						));
-				return redirect;
-			}
+            productService.checkIfThereAreEnoughProductsInStock(
+                    quantity,
+                    addProduct.getQuantity()
+            );
 
     		Purchase purchase = sCart.getPurchase();
     		if (purchase == null) {
@@ -132,21 +126,10 @@ public class CartController {
 							// Example: 2 Items in database: 1 is quantity user
 							// 	 added, 2 items were already in his cart, 2+1>3
 							// 	 ->	 failure
-							if (pp.getQuantity() + quantity >
-									numberOfProductsInDatabase) {
-							    // print error to logger
-								logger.error("There are not enough products left");
-								// redirect to all products page
-                                redirect.setUrl("/product/");
-                                // add flash message displayed on top
-								redirectAttributes.addFlashAttribute("flash",
-										new FlashMessage(
-                                            "Sorry! No more products " +
-													"of this type is left",
-                                            FAILURE
-										));
-								return redirect;
-							}
+                            productService.checkIfThereAreEnoughProductsInStock(
+                                    pp.getQuantity() + quantity,
+                                    addProduct.getQuantity()
+                            );
 							pp.setQuantity(pp.getQuantity() + quantity);
 							productAlreadyInCart = true;
     						break;
