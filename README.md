@@ -71,6 +71,11 @@
     and include those fragments in the individual templates,
     so as to eliminate the duplication of markup.
     <hr>
+* [9.] (#task-9)
+    Throw exceptions in the service layer for the case
+    when an product’s requested quantity exceeds the quantity in stock,
+    instead of checking the quantity in the controller.
+    <hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -416,7 +421,30 @@ Under construction...
     "head", "header", "div" with flash fragments.
     <hr>
 9. <a id="task-9"></a>
+    Throw exceptions in the service layer for the case
+    when an product’s requested quantity exceeds the quantity in stock,
+    instead of checking the quantity in the controller.
+    <hr>
+    I introduced on [ProductService] and [ProductServiceImpl] following
+    method: `checkIfThereAreEnoughProductsInStock`. It is very simple
+    method checking two integers. It throws [NotEnoughProductsException]
+    when passed quantity from user exceeds number of items in stock.
+    <br>
+    This is used in following [CartController] methods:
+    - `updateCart`
+    - `addToCart`
 
+    The according tests in [CartControllerTest] were changed so that
+    the throw of exception can
+    be modeled, (see [Task 2](#task-2) for more: it is related):
+    - `addToCartPostRequestWithQuantityMoreThanInDbFails`
+    - `addToCartPostRequestWithQuantityPlusCartQuantityMoreThanInDbFails`
+    - `updatingCartWithQuantityMoreThanInDbFails`
+
+    Exception thrown is handled with "@ExceptionHandler" method
+    `notEnoughProductsRedirect` in [CartController] method
+<hr>
+10. <a id="task-10"></a>
 
 
 
