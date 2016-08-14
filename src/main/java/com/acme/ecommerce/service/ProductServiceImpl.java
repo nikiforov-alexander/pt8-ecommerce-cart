@@ -2,6 +2,7 @@ package com.acme.ecommerce.service;
 
 import com.acme.ecommerce.domain.Product;
 import com.acme.ecommerce.exception.NotEnoughProductsException;
+import com.acme.ecommerce.exception.NotFoundException;
 import com.acme.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,11 +31,17 @@ public class ProductServiceImpl implements ProductService {
 		return repository.findAll(pageable);
 	}
 
+	// Task #10-11:
+    // We throw NotFoundException if product is not found on service
+    // layer. Exception is handled in controller
 	@Override
 	public Product findById(Long id) {
-		Product result = repository.findOne(id);
-		
-		return result;
+		Product product = repository.findOne(id);
+		if (product == null) {
+			throw new NotFoundException("Product Not Found");
+		} else {
+            return product;
+        }
 	}
 
 	// This method is created to solve Task #9:

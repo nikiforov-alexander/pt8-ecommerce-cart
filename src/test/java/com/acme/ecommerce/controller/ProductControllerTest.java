@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -91,7 +92,14 @@ public class ProductControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(view().name("product_detail"));
 	}
-	
+
+	// Task #10-11.
+    //    Research @ExceptionHandler controller methods in Spring,
+    //    and add one for when a product’s detail view is requested
+    //    for an unknown product id.
+    //    This should produce a 404 response code and render
+    //    a view that displays a friendly page saying
+    //    that the product wasn’t found.
 	@Test
 	public void getProductDetailInvalidId() throws Exception {
 	    // Old way of handling error
@@ -103,16 +111,17 @@ public class ProductControllerTest {
 		// My way of handling error
 
 		// Arrange:
-		// when product service will be called we return null, to throw
+		// when product service will be called we throw
 		// exception
-		when(productService.findById(1L)).thenReturn(null);
+        doThrow(new NotFoundException("Product Not Found"))
+				.when(productService)
+				.findById(1L);
 
 		// Act and Assert:
 		// When GET request is made to product detail with non-existing
 		// product
 		// Then:
-		// - status should be OK - because error page should be successfully
-		//     generated
+		// - status should be 404 not found
 		// - view name has to be "/error"
 		// - model should have attribute exception of type
 		//     NotFoundException
@@ -120,7 +129,7 @@ public class ProductControllerTest {
 				MockMvcRequestBuilders
 						.get("/product/detail/1"))
 				.andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(view().name("/error"))
 				.andExpect(
 						model().attribute(

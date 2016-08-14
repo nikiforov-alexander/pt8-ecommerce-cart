@@ -8,7 +8,6 @@
 <hr>
 
 ### Misc
-- [Structure of the project] (#structure)
 - [Quick Links to files and directories] (#links)
 
 <hr>
@@ -65,6 +64,7 @@
     but the id requested isn’t found in the database.
     The rendered view should display a message saying
     that the product wasn’t found.
+    <hr>
 * [8.] (#task-8)
     Combine the common elements of Thymeleaf templates into a
     single template as fragments,
@@ -76,6 +76,22 @@
     when an product’s requested quantity exceeds the quantity in stock,
     instead of checking the quantity in the controller.
     <hr>
+* [10.] (#task-10)
+    Throw an exception in the service layer for the case
+    when a certain product entity is requested -
+    ProductService.findById(Long) - but is not found.
+    Explicitly catch this exception in the controller layer,
+    or use an @ExceptionHandler as stated
+    in the next extra credit opportunity.
+    <hr>
+* [11.] (#task-11)
+    Research @ExceptionHandler controller methods in Spring,
+    and add one for when a product’s detail view is requested
+    for an unknown product id.
+    This should produce a 404 response code and
+    render a view that displays a friendly page saying
+    that the product wasn’t found.
+<hr>
 
 <!--Links-->
 <!-- settings files -->
@@ -445,10 +461,32 @@ Under construction...
     `notEnoughProductsRedirect` in [CartController] method
 <hr>
 10. <a id="task-10"></a>
-
-
-
-
+    Throw an exception in the service layer for the case
+    when a certain product entity is requested -
+    ProductService.findById(Long) - but is not found.
+    Explicitly catch this exception in the controller layer,
+    or use an @ExceptionHandler as stated
+    in the next extra credit opportunity.
+    <hr>
+    [NotFoundException] is thrown on service layer in [ProductServiceImpl]
+    `findById` method. It is handled in "@ExceptionHandler"
+    `exceptionHandler` method in [ProductController]. This behavior
+    is tested in [ProductControllerTest]: `getProductDetailInvalidId`
+    method.
+<hr>
+11. <a id="task-11"></a>
+    Research @ExceptionHandler controller methods in Spring,
+    and add one for when a product’s detail view is requested
+    for an unknown product id.
+    This should produce a 404 response code and
+    render a view that displays a friendly page saying
+    that the product wasn’t found.
+    <hr>
+    Added @ResponseStatus with 404 status to
+    `@ExceptionHandler exceptionHandler` method in [ProductController].
+    Tested in [ProductControllerTest]: `getProductDetailInvalidId`
+    method.
+<hr>
 
 
 <a id="links"></a>
