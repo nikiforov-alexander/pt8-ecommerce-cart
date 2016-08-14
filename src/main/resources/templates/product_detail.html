@@ -3,6 +3,8 @@
     <head th:replace="layout :: head('Product Detail')"></head>
     <body>
     <header th:replace="layout :: header('Product Detail')"></header>
+    <!--/* Flash message displayed on success or failure, see layout */-->
+    <div th:replace="layout :: flash"></div>
         <section class="product-detail">
             <div class="product-image">
                  <img th:src="@{/product/{productId}/image(productId=${product.id})}"/>
