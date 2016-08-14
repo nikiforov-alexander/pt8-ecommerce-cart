@@ -8,7 +8,6 @@
 <hr>
 
 ### Misc
-- [Structure of the project] (#structure)
 - [Quick Links to files and directories] (#links)
 
 <hr>
@@ -65,6 +64,7 @@
     but the id requested isn’t found in the database.
     The rendered view should display a message saying
     that the product wasn’t found.
+    <hr>
 * [8.] (#task-8)
     Combine the common elements of Thymeleaf templates into a
     single template as fragments,
@@ -482,7 +482,8 @@ Under construction...
     render a view that displays a friendly page saying
     that the product wasn’t found.
     <hr>
-    Added @ResponseStatus with 404 status to `@ExceptionHandler`.
+    Added @ResponseStatus with 404 status to
+    `@ExceptionHandler exceptionHandler` method in [ProductController].
     Tested in [ProductControllerTest]: `getProductDetailInvalidId`
     method.
 <hr>
