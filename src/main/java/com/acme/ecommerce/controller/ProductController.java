@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ import java.io.FileNotFoundException;
 
 @Controller
 @RequestMapping("/product")
+@ComponentScan("com.acme.ecommerce")
 public class ProductController {
 	
 	final Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -67,24 +69,18 @@ public class ProductController {
 	// that the product wasn’t found.
 	// I throw an NotFoundException, handled in @ExceptionHandler
 	// exceptionHandler method at the bottom
+    // Also Task #10,11
     @RequestMapping(path = "/detail/{id}", method = RequestMethod.GET)
     public String productDetail(@PathVariable long id, Model model) {
     	logger.debug("Details for Product " + id);
-    	
+        // if product not found, exception is thrown
     	Product returnProduct = productService.findById(id);
-    	if (returnProduct != null) {
-    		model.addAttribute("product", returnProduct);
-    		ProductPurchase productPurchase = new ProductPurchase();
-    		productPurchase.setProduct(returnProduct);
-    		productPurchase.setQuantity(1);
-    		model.addAttribute("productPurchase", productPurchase);
-    	} else {
-    		logger.error("Product " + id + " Not Found!");
-			// new way of handling: NotFoundException
-			throw new NotFoundException("Product Not Found");
-            // old way of handling: simple redirect
-//    		return "redirect:/error";
-    	}
+
+        model.addAttribute("product", returnProduct);
+        ProductPurchase productPurchase = new ProductPurchase();
+        productPurchase.setProduct(returnProduct);
+        productPurchase.setQuantity(1);
+        model.addAttribute("productPurchase", productPurchase);
 
         return "product_detail";
     }
@@ -121,7 +117,9 @@ public class ProductController {
 
     // Task #7: Here NotFoundException is handled, "error.html" is rendered
 	// and "exception" is added to model.
+	// Task #10, #11: response status is set to 404 not found
     @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
 	public String exceptionHandler(Model model, Exception exception){
     	model.addAttribute("exception", exception);
 		return "/error";
