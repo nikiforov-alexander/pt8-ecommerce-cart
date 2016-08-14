@@ -222,8 +222,9 @@
 
 ### Eclipse Installation instructions
 <hr> <a id="eclipse"></a>
-Under construction...
-
+    I generated necessary `.classpath` and `eCommerce.userlibraries`.
+    Eclipse plugin was already in [build.gradle]. I tested it worked for me.
+    I didn't change any build paths, it just worked as is.
 
 
 
