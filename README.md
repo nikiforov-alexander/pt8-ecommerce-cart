@@ -417,14 +417,14 @@
     <hr>
     I changed old code that was redirecting to "error" page in
     [ProductController] in `productDetail` method. Now when product
-    is null, [NotFoundException] is thrown, and "@ExceptionHandler"
+    is not found, [NotFoundException] is thrown, and "@ExceptionHandler"
     method `exceptionHandler` is taking care of this exception,
     generating [error.html] template in which exception message is
     printed if exception is not null.
     <br>
     Exactly this is tested in [ProductControllerTest] class in
     `getProductDetailInvalidId` method:
-    - status OK
+    - status 404: see for more [Task 11](#task-11)
     - model has attribute exception of type [NotFoundException]
     - address is "/error"
 <hr>
