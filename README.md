@@ -189,6 +189,8 @@
     ./src/main/java/com/acme/ecommerce/web/FlashMessage.java "./src/main/java/com/acme/ecommerce/web/FlashMessage.java"
 [NotFoundException]:
     ./src/main/java/com/acme/ecommerce/exception/NotFoundException.java "./src/main/java/com/acme/ecommerce/exception/NotFoundException.java"
+[NotEnoughProductsException]:
+    ./src/main/java/com/acme/ecommerce/exception/NotEnoughProductsException.java "./src/main/java/com/acme/ecommerce/exception/NotEnoughProductsException.java"
 [CombinedBilling]:
     ./src/main/java/com/acme/ecommerce/domain/CombinedBilling.java "./src/main/java/com/acme/ecommerce/domain/CombinedBilling.java"
 [Purchase]:
@@ -572,6 +574,7 @@
 ##### Helpful web classes
 - [FlashMessage]
 - [NotFoundException]
+- [NotEnoughProductsException]
 - [WebConstants]
 
 
